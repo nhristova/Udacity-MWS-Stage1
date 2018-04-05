@@ -1,15 +1,13 @@
-body {
-    
-}
+body {}
 
-
-@media screen and (min-width: 1000px){
+@media screen and (min-width: 1000px) {
     #restaurants-list {
         display: flex;
         flex-wrap: wrap;
+        justify-content: space-between;
     }
-
+    /* 
     #restaurants-list li {
         max-width: 30vw;
-    }
+    } */
 }
