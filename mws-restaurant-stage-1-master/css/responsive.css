@@ -1,5 +1,24 @@
 body {}
 
+@media screen and (min-width: 400px) {
+    .filter-options {
+        padding: 10px 0 0 0;
+    }
+    .filter-options select {
+        display: inline-block;
+    }
+}
+
+@media screen and (min-width: 600px) {
+    .filter-options {
+        padding: 0;
+    }
+    .filter-options h2 {
+        display: inline-block;
+        width: auto;
+    }
+}
+
 @media screen and (min-width: 1000px) {
     #restaurants-list {
         display: flex;
