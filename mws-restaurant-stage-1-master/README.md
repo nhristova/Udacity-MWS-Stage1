@@ -33,3 +33,4 @@ Most of the code in this project has been written to the ES6 JavaScript specific
 
 `python -m SimpleHTTPServer 8000`
 
+`http-server -p 8000 --cors`
