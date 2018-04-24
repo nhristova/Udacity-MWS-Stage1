@@ -87,11 +87,11 @@ header {
     padding: 0;
     display: flex;
     flex-wrap: wrap;
-    align-items: flex-start;
+    /* align-items: flex-start; */
 }
 
 #reviews-list li {
-    /* align-items: flex-start; */
+    align-content: flex-start;
     background-color: #fff;
     border: 2px solid #f3f3f3;
     border-radius: 20px 0;
