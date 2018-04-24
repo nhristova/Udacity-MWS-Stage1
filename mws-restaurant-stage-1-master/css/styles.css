@@ -3,6 +3,10 @@
 
 /* CSS Document */
 
+* {
+    box-sizing: border-box;
+}
+
 body,
 td,
 th,
@@ -70,6 +74,8 @@ section {
 #maincontent {
     background-color: #f3f3f3;
     min-height: 100%;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 #footer {
@@ -86,7 +92,7 @@ section {
 /* ====================== Navigation ====================== */
 
 nav {
-    width: 100vw;
+    width: 100%;
     height: 80px;
     background-color: #252831;
     display: flex;
@@ -112,7 +118,7 @@ nav h1 a {
     background-color: #eee;
     font-size: 17px;
     margin: 0;
-    width: calc(50% - 80px);
+    width: 50%;
 }
 
 
@@ -214,13 +220,13 @@ nav h1 a {
     padding: 0 30px 25px;
     text-align: left;
     /* TODO: make width responsive */
-    width: 270px; 
+    width: 270px;
 }
 
 #restaurants-list .restaurant-img {
     background-color: #ccc;
     display: block;
-    border-radius: 20px 0 0; 
+    border-radius: 20px 0 0;
     margin-left: -30px;
     width: calc(100% + 2 * 30px);
 }
@@ -263,32 +269,32 @@ nav h1 a {
 
 /* ====================== Restaurant Details ====================== */
 
-.inside header {
+header {
     position: sticky;
     top: 0;
     width: 100%;
     z-index: 1000;
 }
 
-.inside #map-container {
+#map-container {
     background: blue none repeat scroll 0 0;
-    height: 87%;
+    height: 90vh;
     position: fixed;
     right: 0;
     top: 80px;
     width: 50%;
 }
 
-.inside #map {
+#map {
     background-color: #ccc;
     height: 100%;
     width: 100%;
 }
 
-.inside #footer {
+#footer {
     bottom: 0;
     position: absolute;
-    width: 50%;
+    width: 100vw;
 }
 
 #restaurant-name {
@@ -304,6 +310,7 @@ nav h1 a {
 
 #restaurant-img {
     width: 90%;
+    border-radius: 20px 0;
 }
 
 #restaurant-address {
@@ -321,19 +328,19 @@ nav h1 a {
     padding: 2px 0;
     text-align: center;
     text-transform: uppercase;
-    width: 90%;
+    /* width: 90%; */
 }
 
 #restaurant-container,
 #reviews-container {
     border-bottom: 1px solid #d9d9d9;
     border-top: 1px solid #fff;
-    padding: 140px 40px 30px;
+    padding: 30px;
     width: 50%;
 }
 
 #reviews-container {
-    padding: 30px 40px 80px;
+    padding: 30px 30px 60px;
 }
 
 #reviews-container h2 {
@@ -347,17 +354,20 @@ nav h1 a {
 #reviews-list {
     margin: 0;
     padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
 }
 
 #reviews-list li {
-    /* align-items: center; */
+    /* align-items: flex-start; */
     background-color: #fff;
     border: 2px solid #f3f3f3;
     border-radius: 20px 0;
     display: flex;
     flex-wrap: wrap;
     list-style-type: none;
-    margin: 0 0 30px;
+    margin: 5px 0 15px;
     overflow: hidden;
     padding: 0 20px 20px;
     position: relative;
@@ -389,7 +399,7 @@ nav h1 a {
     width: calc(60% + 20px);
 }
 
-#reviews-list li p:nth-of-type(3){
+#reviews-list li p:nth-of-type(3) {
     background-color: #ffa500;
     border-radius: 3px;
     color: #fff;

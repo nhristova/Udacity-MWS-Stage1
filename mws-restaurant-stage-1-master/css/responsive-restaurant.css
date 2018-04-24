@@ -1,53 +1,87 @@
-body {
-}
+body {}
 
-@media screen and (max-width: 360px) {
-
-    nav h1 a{
+@media screen and (max-width: 480px) {
+    nav h1 a {
         font-size: 0.8em;
         letter-spacing: 8px;
     }
+    #restaurant-container {
+        width: 100vw;
+    }
+    #reviews-list li {
+        width: 100%;
+    }
+    #map-container {
+        width: 100vw;
+        height: 100vw;
+    }
+}
 
+@media screen and (min-width: 481px) and (max-width: 720px) {
+    #restaurant-container {
+        width: 50vw;
+        order: 1;
+    }
+    #map-container {
+        width: 50vw;
+        height: 75vh;
+        order: 2;
+    }
+    #reviews-container {
+        order: 3;
+    }
+    #reviews-list li {
+        width: calc(50% - 10px);
+    }
+    #reviews-list li:nth-child(odd) {
+        margin-right: 10px;
+    }
+}
+
+@media screen and (max-width: 720px) {
     #breadcrumb {
         width: auto;
     }
-
-    .inside header {
+    /* TODO CHECK IF THIS IS NEEDED */
+    header {
         width: 100vw;
     }
-    .inside #map-container {
-        width: 100vw;
-        height: 100vw;
+    #map-container {
         position: initial;
-        box-sizing: border-box;
     }
-
-    .inside #footer {
+    #footer {
         position: initial;
         width: auto;
     }
-
-    #restaurant-container, #reviews-container {
-        box-sizing: border-box;
+    #maincontent {
+        /* display: flex;
+        flex-wrap: wrap; */
+    }
+    #restaurant-container,
+    #reviews-container {
         padding: 10px 20px 20px;
+    }
+    #reviews-container {
         width: 100vw;
     }
-
-    #restaurant-img{
+    #restaurant-img {
         width: 100%;
-        border-radius: 20px 0;
     }
-
-    #reviews-list li {
-        box-sizing: border-box;        
-        width: 100%;
+    #reviews-list {
+        /* display: flex;
+        flex-wrap: wrap; */
     }
 }
 
-@media screen and (min-width: 600px) {
-    
+
+/* The styles from the main file cover sizes 721 to 1000*/
+
+@media screen and (min-width: 721px) {
+    #maincontent {
+        flex-direction: column;
+    }
 }
 
 @media screen and (min-width: 1000px) {
-
+    /* TODO: add margins for large displays - couldn't overcome issue with the map */
 }
