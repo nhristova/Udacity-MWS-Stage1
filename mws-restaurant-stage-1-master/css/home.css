@@ -83,7 +83,7 @@
     display: block;
     border-radius: 20px 0 0;
     margin-left: -30px;
-    width: calc(100% + 2 * 30px);
+    max-width: calc(100% + 2 * 30px);
 }
 
 #restaurants-list li h1 {
