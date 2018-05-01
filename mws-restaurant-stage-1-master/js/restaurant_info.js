@@ -54,6 +54,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
 
     const address = document.getElementById('restaurant-address');
     address.innerHTML = restaurant.address;
+    address.setAttribute('aria-label', 'Address: ' + restaurant.address + '.');
 
     const imgSrc = DBHelper.imageUrlForRestaurant(restaurant);
 
@@ -66,6 +67,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
 
     const cuisine = document.getElementById('restaurant-cuisine');
     cuisine.innerHTML = restaurant.cuisine_type;
+    cuisine.setAttribute('aria-label', 'Cuisine: ' + restaurant.cuisine_type + '.');
 
     // fill operating hours
     if (restaurant.operating_hours) {
@@ -80,6 +82,8 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
  */
 fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => {
     const hours = document.getElementById('restaurant-hours');
+    // TODO: Test if screen reader reads the contents of the restaurant hours
+    hours.setAttribute('aria-label', 'Restaurant hours');
     for (let key in operatingHours) {
         const row = document.createElement('tr');
 

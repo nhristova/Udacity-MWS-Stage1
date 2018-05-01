@@ -7,6 +7,10 @@
     box-sizing: border-box;
 }
 
+*:focus {
+    border: 2px solid #ea4335 !important;
+}
+
 body,
 td,
 th,
@@ -69,6 +73,26 @@ menu,
 nav,
 section {
     display: block;
+}
+
+
+/* ====================== Skip link ====================== */
+
+.skip-link {
+    position: absolute;
+    top: -40px;
+}
+
+.skip-link:focus {
+    position: static;
+    padding-top: 90px;
+    top: 0;
+    background-color: #3397DB;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.8em;
+    z-index: 100;
 }
 
 #maincontent {
