@@ -4,6 +4,9 @@ let restaurants,
 var map
 var markers = []
 
+/*globals toastr*/
+
+
 /**
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
  */
@@ -163,6 +166,9 @@ createRestaurantHTML = (restaurant) => {
     const more = document.createElement('a');
     more.innerHTML = 'View Details';
     more.href = DBHelper.urlForRestaurant(restaurant);
+    /* The fullstop in the beginning of the aria-label is 
+    for the screen reader to make a pause after reading the address */
+    more.setAttribute('aria-label', '. Details for restaurant: ' + restaurant.name);
     li.append(more);
 
     return li;
@@ -180,4 +186,78 @@ addMarkersToMap = (restaurants = self.restaurants) => {
         });
         self.markers.push(marker);
     });
+}
+
+window.onload = (ev) => {
+    console.log('window loaded');
+    toastr.warning('I am toasting');
+    registerServiceWorker();
+};
+
+function registerServiceWorker() {
+    // Check support for serviceWorker
+    // skip SW functions if no support
+    if (!navigator.serviceWorker) {
+        console.log('Browser does not support serviceWorker');
+        return;
+    }
+
+    navigator.serviceWorker.register('/sw.js')
+        .then((reg) => {
+            console.log('SW registered');
+
+            // If there is no controller, this page was NOT loaded via a SW
+            // so this is the latest version, exit
+            if (!navigator.serviceWorker.controller) {
+                console.log('Latest version');
+                return;
+            }
+
+            // Updated SW waiting, call function to show toast message
+            if (reg.waiting) {
+                console.log('SW waiting');
+                updateReady(reg.waiting);
+                return;
+            }
+
+            // Updated SW is installing, track progress 
+            // and call updateReady when it is installed
+            if (reg.installing) {
+                console.log('SW installing');
+                trackInstalling(reg);
+                return;
+            }
+
+            // Listen for incoming SW and track them
+            reg.addEventListener('updatefound', () => {
+                console.log('Update found');
+                trackInstalling(reg);
+            });
+        })
+        .catch((err) => console.log('Error registering serviceWorker', err));
+
+    // Ensure refresh is only called once.
+    // This works around a bug in "force update on reload".
+    let refreshing;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (refreshing) return;
+        window.location.reload();
+        refreshing = true;
+    });
+}
+
+function trackInstalling(worker) {
+    console.log('Track installing');
+    worker.addEventListener('statechange', () => {
+        console.log('State change');
+        if (worker.state == 'installed') {
+            updateReady(worker);
+        };
+    });
+}
+
+function updateReady(worker) {
+    toastr.error('New version available');
+
+    // get reply from toastr
 }
