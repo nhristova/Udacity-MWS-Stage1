@@ -4,6 +4,9 @@ let restaurants,
 var map
 var markers = []
 
+/*globals toastr*/
+
+
 /**
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
  */
@@ -163,6 +166,9 @@ createRestaurantHTML = (restaurant) => {
     const more = document.createElement('a');
     more.innerHTML = 'View Details';
     more.href = DBHelper.urlForRestaurant(restaurant);
+    /* The fullstop in the beginning of the aria-label is 
+    for the screen reader to make a pause after reading the address */
+    more.setAttribute('aria-label', '. Details for restaurant: ' + restaurant.name);
     li.append(more);
 
     return li;
@@ -180,4 +186,119 @@ addMarkersToMap = (restaurants = self.restaurants) => {
         });
         self.markers.push(marker);
     });
+}
+
+/*
+window.onload = (ev) => {
+    console.log('window loaded');
+    registerServiceWorker();
+};
+*/
+
+
+toastr.options = {
+    "closeButton": false,
+    "closeOnHover": false,
+    "debug": false,
+    "newestOnTop": false,
+    "progressBar": false,
+    "positionClass": "toast-top-right",
+    "preventDuplicates": false,
+    "onclick": false,
+    "showDuration": "300",
+    "hideDuration": "1000",
+    "timeOut": "5000",
+    "extendedTimeOut": "0",
+    "showEasing": "swing",
+    "hideEasing": "linear",
+    "showMethod": "fadeIn",
+    "hideMethod": "fadeOut",
+    "tapToDismiss": true
+}
+
+function MainController() {
+    toastr.warning('Starting SW registration');
+    this.registerServiceWorker();
+}
+
+MainController.prototype.registerServiceWorker = function() {
+    var mainController = this;
+
+    navigator.serviceWorker.register('/sw.js')
+        .then(function(reg) {
+            console.log('SW registered');
+
+            // If there is no controller, this page was NOT loaded via a SW
+            // so this is the latest version, exit
+            if (!navigator.serviceWorker.controller) {
+                console.log('Latest version');
+                return;
+            }
+
+            // Updated SW waiting, call function to show toast message
+            if (reg.waiting) {
+                console.log('SW waiting');
+                mainController.updateReady(reg.waiting);
+                return;
+            }
+
+            // Updated SW is installing, track progress 
+            // and call updateReady when it is installed
+            if (reg.installing) {
+                console.log('SW installing');
+                mainController.trackInstalling(reg.installing);
+                return;
+            }
+
+            // Listen for incoming SW and track them
+            reg.addEventListener('updatefound', () => {
+                console.log('Update found');
+                mainController.trackInstalling(reg.installing);
+            });
+        })
+        .catch((err) => console.log('Error registering serviceWorker', err));
+
+    // Ensure refresh is only called once.
+    // This works around a bug in "force update on reload".
+    var refreshing;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (refreshing) return;
+        window.location.reload();
+        refreshing = true;
+    });
+}
+
+MainController.prototype.trackInstalling = function(worker) {
+    var mainController = this;
+
+    console.log('Track installing');
+    worker.addEventListener('statechange', function(event) {
+        console.log('State change');
+        if (worker.state == 'installed') {
+            //event.waitUntil(updateReady(worker));
+            mainController.updateReady(worker);
+        };
+    });
+}
+
+MainController.prototype.updateReady = function(worker) {
+    var thisWorker = worker;
+
+    toastr.options.onclick = function(event) {
+        var dataAction = event.target.getAttribute('data-action');
+
+        if (dataAction === 'update') {
+            thisWorker.postMessage({ action: 'skipWaiting' });
+        }
+
+        $(event.target).closest('.toast').remove();
+    };
+
+    toastr.info('New version ready,  update?<br /><button type="button" class="btn btn-default" data-action="update" id="okBtn">Yes</button> <button type="button" class="btn clear" data-action="noupdate" id="noBtn">No</button>', '', { timeOut: 0, extendedTimeOut: 0, tapToDismiss: false });
+}
+
+// Check support for serviceWorker
+// skip SW functions if no support
+if (navigator.serviceWorker) {
+    new MainController();
 }
