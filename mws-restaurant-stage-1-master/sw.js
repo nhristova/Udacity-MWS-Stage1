@@ -1,4 +1,4 @@
-const staticCacheName = 'restaurant-static-v7';
+const staticCacheName = 'restaurant-static-v8';
 const imgsCacheName = 'restaurant-imgs';
 const allCaches = [staticCacheName, imgsCacheName];
 
@@ -59,8 +59,9 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('message', (event) => {
-    // Event.data should contain the reply from the user to update 
+    // Event.data should contain the reply from the user to update
     if (event.data.action === 'skipWaiting') {
+        console.log('SWITCHING TO NEW SW');
         self.skipWaiting();
     }
 });
