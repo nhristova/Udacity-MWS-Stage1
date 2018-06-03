@@ -4,7 +4,7 @@ let restaurants,
 var map
 var markers = []
 
-/*globals toastr DBHelper*/
+/*globals toastr DBHelper idb*/
 
 
 /**
@@ -216,8 +216,28 @@ toastr.options = {
     "tapToDismiss": true
 }
 
+function openDatabase() {
+    if (!navigator.serviceWorker) {
+        // resolve or reject??
+        return Promise.resolve();
+    }
+
+    // returns a promise
+    return idb.open('restaurant', 2, (updateDb) => {
+        switch (updateDb.oldVersion) {
+            case 0:
+                const restaurantStore = updateDb.createObjectStore('keyval');
+                restaurantStore.put('rest', 'room');
+            case 1:
+                updateDb.createObjectStore('people', { keypath: 'name' });
+        }
+    });
+}
+
+
 function MainController() {
     toastr.warning('Starting SW registration');
+    this.dbPromise = openDatabase();
     this.registerServiceWorker();
 }
 

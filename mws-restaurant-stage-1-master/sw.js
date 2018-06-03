@@ -4,8 +4,12 @@ const allCaches = [staticCacheName, imgsCacheName];
 
 self.addEventListener('install', (event) => {
     var urlsToCache = [
-        // '/',
-        // 'js/main.js',
+        '/',
+        'js/main.js',
+        'js/dbhelper.js',
+        'js/idb.js',
+        'js/toastr.min.js',
+        'js/jquery-3.3.1.min.js',
         'css/styles.css',
         'https://fonts.googleapis.com/css?family=Roboto:300,400s'
     ];
@@ -17,7 +21,19 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-    // console.log('Fetching stuff', event.request);
+    // console.log('Fetching: ', event.request.url);
+
+    const requestUrl = new URL(event.request.url);
+
+    // why is this needed??
+    if (requestUrl.origin === location.origin) {
+
+    }
+
+    if (requestUrl.pathname.startsWith('/img/')) {
+        event.respondWith(serveImage(event.request));
+        return;
+    }
 
     event.respondWith(
         // check for the requested resource in cache
@@ -65,3 +81,18 @@ self.addEventListener('message', (event) => {
         self.skipWaiting();
     }
 });
+
+function serveImage(request) {
+    var storageUrl = request.url.replace(/_*[a-z]*\.jpg/, '');
+
+    return caches.open(imgsCacheName)
+        .then(cache => {
+            return cache.match(storageUrl).then(response => {
+                if (response) { return response; }
+                return fetch(request).then(networkResponse => {
+                    cache.put(storageUrl, networkResponse.clone());
+                    return networkResponse;
+                });
+            })
+        });
+}
