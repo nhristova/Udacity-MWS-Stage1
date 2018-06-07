@@ -236,7 +236,10 @@ toastr.options = {
 
 
 function MainController() {
-    toastr.warning('Starting SW registration');
+    if (!navigator.onLine) {
+        toastr.error('No internet connection, loading from cache.');
+    }
+
     // this.dbPromise = openDatabase();
     this.registerServiceWorker();
 }
@@ -245,6 +248,7 @@ MainController.prototype.registerServiceWorker = function() {
     // Check support for serviceWorker
     // skip SW functions if no support
     if (!navigator.serviceWorker) { return; }
+    toastr.warning('Starting SW registration');
 
     var mainController = this;
 
