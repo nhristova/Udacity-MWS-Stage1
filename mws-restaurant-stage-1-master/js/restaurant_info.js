@@ -60,7 +60,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
 
     const image = document.getElementById('restaurant-img');
     image.className = 'restaurant-img';
-    image.alt = "";
+    image.alt = restaurant.description;
     image.src = imgSrc;
     image.srcset = `${imgSrc.replace('.jpg', '_small.jpg')} 400w, ${imgSrc} 800w`;
     image.sizes = "(min-width: 481px) 50vw, 100vw";

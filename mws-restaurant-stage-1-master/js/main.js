@@ -144,7 +144,7 @@ createRestaurantHTML = (restaurant) => {
 
     const image = document.createElement('img');
     image.className = 'restaurant-img';
-    image.alt = "";
+    image.alt = restaurant.description;
     image.src = imgSrc;
     image.srcset = `${imgSrc.replace('.jpg', '_small.jpg')} 400w, ${imgSrc} 800w`;
     image.sizes = "(min-width: 480px) 40vw, (min-width: 721px) 29vw, (min-width: 1000px) 22vw";
