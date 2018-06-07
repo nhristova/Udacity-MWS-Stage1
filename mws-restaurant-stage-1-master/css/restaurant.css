@@ -74,7 +74,7 @@ header {
     padding: 30px 30px 60px;
 }
 
-#reviews-container h2 {
+#reviews-container h3 {
     color: #f58500;
     font-size: 24pt;
     font-weight: 300;
@@ -110,6 +110,9 @@ header {
     box-sizing: border-box;
 }
 
+
+/* Styling of the reviewer name */
+
 #reviews-list li p:first-of-type {
     color: #fff;
     background-color: #333;
@@ -118,6 +121,9 @@ header {
     padding: 10px 20px;
     width: calc(40% + 20px);
 }
+
+
+/* Styling of the review date */
 
 #reviews-list li p:nth-of-type(2) {
     color: #fff;
@@ -128,6 +134,9 @@ header {
     padding: 15px 20px;
     width: calc(60% + 20px);
 }
+
+
+/* Styling of the rating label */
 
 #reviews-list li p:nth-of-type(3) {
     background-color: #ffa500;

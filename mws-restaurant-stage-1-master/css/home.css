@@ -21,7 +21,7 @@
     padding: 10px 0;
 }
 
-.filter-options h2 {
+.filter-options h3 {
     color: white;
     font-size: 1rem;
     font-weight: normal;
@@ -86,7 +86,7 @@
     max-width: calc(100% + 2 * 30px);
 }
 
-#restaurants-list li h1 {
+#restaurants-list li h2 {
     color: #f18200;
     font-family: Roboto, Arial, sans-serif;
     font-size: 14pt;

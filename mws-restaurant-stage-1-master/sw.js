@@ -1,4 +1,4 @@
-const staticCacheName = 'restaurant-static-v9';
+const staticCacheName = 'restaurant-static-v5';
 const imgsCacheName = 'restaurant-imgs';
 const allCaches = [staticCacheName, imgsCacheName];
 
@@ -42,7 +42,6 @@ self.addEventListener('fetch', (event) => {
         .then((response) => {
             // If cache entry found, return it
             if (response) {
-                console.log('Getting from cache: ', requestUrl);
                 return response;
             }
             // If not cached, get resource from network
