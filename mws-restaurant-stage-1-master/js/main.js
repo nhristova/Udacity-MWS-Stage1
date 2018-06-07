@@ -216,7 +216,7 @@ toastr.options = {
     "tapToDismiss": true
 }
 
-function openDatabase() {
+/*function openDatabase() {
     if (!navigator.serviceWorker) {
         // resolve or reject??
         return Promise.resolve();
@@ -232,12 +232,12 @@ function openDatabase() {
                 updateDb.createObjectStore('people', { keypath: 'name' });
         }
     });
-}
+}*/
 
 
 function MainController() {
     toastr.warning('Starting SW registration');
-    this.dbPromise = openDatabase();
+    // this.dbPromise = openDatabase();
     this.registerServiceWorker();
 }
 

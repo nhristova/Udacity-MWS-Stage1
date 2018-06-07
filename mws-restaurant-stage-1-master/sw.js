@@ -1,4 +1,4 @@
-const staticCacheName = 'restaurant-static-v8';
+const staticCacheName = 'restaurant-static-v9';
 const imgsCacheName = 'restaurant-imgs';
 const allCaches = [staticCacheName, imgsCacheName];
 
@@ -6,11 +6,17 @@ self.addEventListener('install', (event) => {
     var urlsToCache = [
         '/',
         'js/main.js',
+        'js/restaurant_info.js',
         'js/dbhelper.js',
         'js/idb.js',
         'js/toastr.min.js',
         'js/jquery-3.3.1.min.js',
+        'data/restaurants.json',
         'css/styles.css',
+        'css/home.css',
+        'css/responsive-home.css',
+        'css/restaurant.css',
+        'css/responsive-restaurant.css',
         'https://fonts.googleapis.com/css?family=Roboto:300,400s'
     ];
 
@@ -21,37 +27,31 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-    // console.log('Fetching: ', event.request.url);
-
     const requestUrl = new URL(event.request.url);
 
-    // why is this needed??
     if (requestUrl.origin === location.origin) {
-
-    }
-
-    if (requestUrl.pathname.startsWith('/img/')) {
-        event.respondWith(serveImage(event.request));
-        return;
+        if (requestUrl.pathname.startsWith('/img/')) {
+            event.respondWith(serveImage(event.request));
+            return;
+        }
     }
 
     event.respondWith(
-        // check for the requested resource in cache
+        // Check for the requested resource in cache
         caches.match(event.request)
         .then((response) => {
-            // if cache entry found, return it
+            // If cache entry found, return it
             if (response) {
-                // console.log('Getting things from cache');    
+                console.log('Getting from cache: ', requestUrl);
                 return response;
             }
-            // if not cached, get resource from network
+            // If not cached, get resource from network
             return fetch(event.request);
         })
         .then((response) => {
             if (response.status === 404) {
                 return new Response('Not found');
             }
-            // process response eg: response.json()
             return response;
         })
         .catch((error) => {
@@ -83,12 +83,17 @@ self.addEventListener('message', (event) => {
 });
 
 function serveImage(request) {
+    // Store only one of each image, regardless of size
     var storageUrl = request.url.replace(/_*[a-z]*\.jpg/, '');
 
+    // Return images from cache or 
+    // get them from network and store them in cache before returning them
     return caches.open(imgsCacheName)
         .then(cache => {
             return cache.match(storageUrl).then(response => {
-                if (response) { return response; }
+                if (response) {
+                    return response;
+                }
                 return fetch(request).then(networkResponse => {
                     cache.put(storageUrl, networkResponse.clone());
                     return networkResponse;
