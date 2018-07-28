@@ -56,11 +56,11 @@ You can audit your site's performance with Lighthouse by using the Audit tab of 
 
 ### 2.4 Starting the finished page
 1. Clone repo [nhristova/udacity-mws-stage2](https://github.com/nhristova/udacity-mws-stage2.git)
-1. Get the server running: In the server folder run:
+1. Get the server running: In the 'server' folder run:
     - `npm i` installs dependencies
     - `npm i sails -g` installs Sails globally
     - `node server` starts server
-1. Start the page: In the restaurants folder run `http-server` (needs to be globally installed)
+1. Start the page: In the 'page' folder run `http-server` (needs to be globally installed)
 
 ---
 
