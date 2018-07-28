@@ -15,6 +15,8 @@ Make sure your code adheres to our HTML, CSS, JavaScript, and Git style guidelin
 
 We recommend using Git from the very beginning. Make sure to commit often and to use well-formatted commit messages that conform to our guidelines.
 
+---
+
 ## Project Overview: Stage 2
 In  **Stage Two**, you will take the responsive, accessible design you built in  **Stage One**  and connect it to an external server. You'll begin by using asynchronous JavaScript to request JSON data from the server. You'll store data received from the server in an offline database using IndexedDB, which will create an app shell architecture. Finally, you'll work to optimize your site to meet performance benchmarks, which you'll test using  [Lighthouse](https://developers.google.com/web/tools/lighthouse/).
 
@@ -52,6 +54,15 @@ You can audit your site's performance with Lighthouse by using the Audit tab of 
 4.  Follow the recommendations provided by Lighthouse to achieve the required performance targets.
 5.  Submit your project code for review.
 
+### 2.4 Starting the finished page
+1. Clone repo [nhristova/udacity-mws-stage2](https://github.com/nhristova/udacity-mws-stage2.git)
+1. Get the server running: In the server folder run:
+    - `npm i` installs dependencies
+    - `npm i sails -g` installs Sails globally
+    - `node server` starts server
+1. Start the page: In the restaurants folder run `http-server` (needs to be globally installed)
+
+---
 
 ## Project Overview: Stage 1
 
