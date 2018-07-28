@@ -11,6 +11,12 @@
 }
 
 
+/* ====================== Restaurants ====================== */
+
+#restaurants {
+    max-width: 100%;
+}
+
 /* ====================== Restaurant Filtering ====================== */
 
 .filter-options {
