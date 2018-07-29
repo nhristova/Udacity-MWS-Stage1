@@ -216,25 +216,6 @@ toastr.options = {
     "tapToDismiss": true
 }
 
-/*function openDatabase() {
-    if (!navigator.serviceWorker) {
-        // resolve or reject??
-        return Promise.resolve();
-    }
-
-    // returns a promise
-    return idb.open('restaurant', 2, (updateDb) => {
-        switch (updateDb.oldVersion) {
-            case 0:
-                const restaurantStore = updateDb.createObjectStore('keyval');
-                restaurantStore.put('rest', 'room');
-            case 1:
-                updateDb.createObjectStore('people', { keypath: 'name' });
-        }
-    });
-}*/
-
-
 function MainController() {
     if (!navigator.onLine) {
         toastr.error('No internet connection, loading from cache.');
@@ -242,6 +223,10 @@ function MainController() {
 
     // this.dbPromise = openDatabase();
     this.registerServiceWorker();
+
+    // periodically fetch from network to check for updates
+    // TODO: update view if restaurants have been edited
+    // setInterval(() => DBHelper.fetchRestaurantsFromNetwork(), 60 * 1000)
 }
 
 MainController.prototype.registerServiceWorker = function() {
@@ -332,6 +317,5 @@ MainController.prototype.updateReady = function(worker) {
 
     toastr.info('New version ready,  update?<br /><button type="button" class="btn btn-default" data-action="update" id="okBtn">Yes</button> <button type="button" class="btn clear" data-action="noupdate" id="noBtn">No</button>', '', { timeOut: 0, extendedTimeOut: 0, tapToDismiss: false });
 }
-
 
 new MainController();

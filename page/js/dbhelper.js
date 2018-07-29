@@ -1,6 +1,9 @@
 /**
  * Common database helper functions.
  */
+let lastUpdate = new Date(2000,1,1);
+let savingRestaurants = false;
+
 class DBHelper {
 
   /**
@@ -15,19 +18,54 @@ class DBHelper {
   /**
    * Fetch all restaurants.
    */
-  static fetchRestaurants(callback) {
-    fetch(DBHelper.DATABASE_URL)
-        .then(response => response.json())
-        .then(restaurants => callback(null, restaurants))
-        .catch(error => callback(error, null))
+  static getRestaurants(callback) {
+    // if there are restaurants in IDB, show them
+
+    DBHelper.loadRestaurants()
+        .then(restaurantsIdb => {
+            if(restaurantsIdb && restaurantsIdb.length) {
+                console.log('Getting restaurants from IDB');
+                callback(null, restaurantsIdb);
+                return false;
+            }
+            return true;
+        })
+        .then(getFromNetwork => getFromNetwork && DBHelper.fetchRestaurantsFromNetwork())
+        .then(restaurants => {
+            restaurants && callback(null, restaurants);
+        })
+        .catch(error => callback(error, null));  
   }
+
+    static fetchRestaurantsFromNetwork() { 
+        return fetch(DBHelper.DATABASE_URL)
+            .then(response => response.json())
+            .then(restaurants => {
+                const updatedIndex = restaurants.findIndex(r => {
+                    const rUpdate = new Date(r.updatedAt);
+                    if(rUpdate > lastUpdate){
+                        lastUpdate = rUpdate;
+                    }
+                    return true;
+                })
+
+                // if any restaurant has been updated, save them all
+                // wouldn't be efficient for big data sets
+                if(updatedIndex >= 0 && !savingRestaurants){
+                    savingRestaurants = true;
+                    DBHelper.saveRestaurants(restaurants);
+                }
+
+                return restaurants;
+            });
+    }
 
   /**
    * Fetch a restaurant by its ID.
    */
   static fetchRestaurantById(id, callback) {
     // fetch all restaurants with proper error handling.
-    DBHelper.fetchRestaurants((error, restaurants) => {
+    DBHelper.getRestaurants((error, restaurants) => {
       if (error) {
         callback(error, null);
       } else {
@@ -46,7 +84,7 @@ class DBHelper {
    */
   static fetchRestaurantByCuisine(cuisine, callback) {
     // Fetch all restaurants  with proper error handling
-    DBHelper.fetchRestaurants((error, restaurants) => {
+    DBHelper.getRestaurants((error, restaurants) => {
       if (error) {
         callback(error, null);
       } else {
@@ -62,7 +100,7 @@ class DBHelper {
    */
   static fetchRestaurantByNeighborhood(neighborhood, callback) {
     // Fetch all restaurants
-    DBHelper.fetchRestaurants((error, restaurants) => {
+    DBHelper.getRestaurants((error, restaurants) => {
       if (error) {
         callback(error, null);
       } else {
@@ -78,7 +116,7 @@ class DBHelper {
    */
   static fetchRestaurantByCuisineAndNeighborhood(cuisine, neighborhood, callback) {
     // Fetch all restaurants
-    DBHelper.fetchRestaurants((error, restaurants) => {
+    DBHelper.getRestaurants((error, restaurants) => {
       if (error) {
         callback(error, null);
       } else {
@@ -99,7 +137,7 @@ class DBHelper {
    */
   static fetchNeighborhoods(callback) {
     // Fetch all restaurants
-    DBHelper.fetchRestaurants((error, restaurants) => {
+    DBHelper.getRestaurants((error, restaurants) => {
       if (error) {
         callback(error, null);
       } else {
@@ -117,7 +155,7 @@ class DBHelper {
    */
   static fetchCuisines(callback) {
     // Fetch all restaurants
-    DBHelper.fetchRestaurants((error, restaurants) => {
+    DBHelper.getRestaurants((error, restaurants) => {
       if (error) {
         callback(error, null);
       } else {
@@ -158,4 +196,54 @@ class DBHelper {
     return marker;
   }
 
+  static openDatabase() {
+        if (!navigator.serviceWorker) {
+            // resolve or reject??
+            return Promise.resolve();
+        }
+
+        // returns a promise
+        // upgradeDb callback only called if `version` is greater 
+        // than the version last opened or 
+        // when the browser has not heard of this database before
+        return idb.open('mws-stage2', 1, (upgradeDb) => {
+            console.log('openDatabase upgradeDb called', upgradeDb);
+            // Trying to create a store twice will throw an error
+            // make sure the version is updated 
+            // so that it skips already created store
+            switch (upgradeDb.oldVersion) {
+                case 0:
+                upgradeDb.createObjectStore('restaurants', { keyPath: 'id'});
+            }
+        });
+    }
+
+    static loadRestaurants(){
+        // check if it's ok to call openDatabase twice
+        return DBHelper.openDatabase()
+        .then(db => {
+            if(!db) return;
+
+            const tx = db.transaction('restaurants');
+            const store = tx.objectStore('restaurants');
+    
+            return store.getAll();
+        })
+    }
+
+    static saveRestaurants(restaurants) {
+        // check if it's ok to call openDatabase twice
+        return DBHelper.openDatabase()
+        .then(db => {
+            const tx = db.transaction('restaurants', 'readwrite');
+            const store = tx.objectStore('restaurants');
+
+            restaurants.forEach(restaurant => store.put(restaurant));
+
+            return tx.complete;
+        }).then(() => {
+            savingRestaurants = false;
+            console.log('Data saved to IDB');
+        });
+    }
 }
