@@ -223,10 +223,6 @@ function MainController() {
 
     // this.dbPromise = openDatabase();
     this.registerServiceWorker();
-
-    // periodically fetch from network to check for updates
-    // TODO: update view if restaurants have been edited
-    // setInterval(() => DBHelper.fetchRestaurantsFromNetwork(), 60 * 1000)
 }
 
 MainController.prototype.registerServiceWorker = function() {

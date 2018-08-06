@@ -55,7 +55,7 @@ You can audit your site's performance with Lighthouse by using the Audit tab of 
 5.  Submit your project code for review.
 
 ### 2.4 Starting the finished page
-1. Clone repo [nhristova/udacity-mws-stage2](https://github.com/nhristova/udacity-mws-stage2.git)
+1. Clone repo [nhristova/udacity-mws-2018-project-restaurant-reviews](https://github.com/nhristova/udacity-mws-2018-project-restaurant-reviews.git)
 1. Get the server running: In the 'server' folder run:
     - `npm i` installs dependencies
     - `npm i sails -g` installs Sails globally
