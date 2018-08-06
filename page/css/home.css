@@ -1,20 +1,17 @@
-/* ====================== Map ====================== */
 
-#map-container {
+header, 
+#maincontent,
+#map-container,
+#restaurants {
     width: 100vw;
 }
+
+/* ====================== Map ====================== */
 
 #map {
     height: 400px;
     width: 100%;
     background-color: #ccc;
-}
-
-
-/* ====================== Restaurants ====================== */
-
-#restaurants {
-    max-width: 100%;
 }
 
 /* ====================== Restaurant Filtering ====================== */
@@ -32,8 +29,8 @@
     font-size: 1rem;
     font-weight: normal;
     line-height: 1;
-    margin: 0 20px;
-    width: 100vw;
+    margin: 0;
+    padding: 0 20px;
 }
 
 .filter-options select {
@@ -125,4 +122,14 @@
     text-align: center;
     text-decoration: none;
     text-transform: uppercase;
+}
+
+
+/* ====================== Toastr styles override ====================== */
+
+#toast-container,
+#toast-container .toast-message,
+#toast-container>div,
+.toast {
+    max-width: 95% !important; 
 }

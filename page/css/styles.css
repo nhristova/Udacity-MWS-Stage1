@@ -5,10 +5,18 @@
 
 * {
     box-sizing: border-box;
+    max-width: 100%;
 }
 
 *:focus {
     border: 2px solid #ea4335 !important;
+}
+
+:root, html, body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    width: 100%;
 }
 
 body,
@@ -23,7 +31,6 @@ p {
 
 body {
     background-color: #fdfdfd;
-    margin: 0;
     position: relative;
 }
 
@@ -127,6 +134,7 @@ nav {
 nav h1,
 nav h2 {
     margin: auto;
+    line-height: 25px;
 }
 
 nav h1 a,
