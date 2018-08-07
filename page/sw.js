@@ -5,13 +5,14 @@ const allCaches = [staticCacheName, imgsCacheName];
 self.addEventListener('install', (event) => {
     var urlsToCache = [
         '/',
+        'restaurant.html',
         'js/main.js',
         'js/restaurant_info.js',
         'js/dbhelper.js',
         'js/idb.js',
         'js/toastr.min.js',
         'js/jquery-3.3.1.min.js',
-        'data/restaurants.json',
+        // 'data/restaurants.json',
         'css/styles.css',
         'css/home.css',
         'css/responsive-home.css',
@@ -28,14 +29,28 @@ self.addEventListener('install', (event) => {
 
 self.addEventListener('fetch', (event) => {
     const requestUrl = new URL(event.request.url);
+    let storageUrl = '';
 
     if (requestUrl.origin === location.origin) {
         if (requestUrl.pathname.startsWith('/img/')) {
-            event.respondWith(serveImage(event.request));
+            
+            // Remove image size info, store only one of each image, regardless of size
+            storageUrl = event.request.url.replace(/_*[a-z]*\.jpg/, '');
+
+            event.respondWith(serveFromCache(event.request, imgsCacheName, storageUrl));
+            //event.respondWith(serveImage(event.request));
+            return;
+        }
+
+        // Use .endsWith('.html') to cache any page
+        if (requestUrl.pathname.startsWith('/restaurant')) {
+            storageUrl = requestUrl.pathname.substr(1);
+
+            event.respondWith(serveFromCache(event.request, staticCacheName, storageUrl));
             return;
         }
     }
-
+    
     event.respondWith(
         // Check for the requested resource in cache
         caches.match(event.request)
@@ -81,13 +96,11 @@ self.addEventListener('message', (event) => {
     }
 });
 
-function serveImage(request) {
-    // Store only one of each image, regardless of size
-    var storageUrl = request.url.replace(/_*[a-z]*\.jpg/, '');
+function serveFromCache(request, cacheName, storageUrl) {
 
-    // Return images from cache or 
+    // Return images/files from cache or 
     // get them from network and store them in cache before returning them
-    return caches.open(imgsCacheName)
+    return caches.open(cacheName)
         .then(cache => {
             return cache.match(storageUrl).then(response => {
                 if (response) {
