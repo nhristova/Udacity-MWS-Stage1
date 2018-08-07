@@ -5,7 +5,6 @@ const allCaches = [staticCacheName, imgsCacheName];
 self.addEventListener('install', (event) => {
     var urlsToCache = [
         '/',
-        'restaurant.html',
         'js/main.js',
         'js/restaurant_info.js',
         'js/dbhelper.js',
