@@ -1,7 +1,7 @@
 const staticCacheName = 'restaurant-static-v5';
 const imgsCacheName = 'restaurant-imgs';
 const allCaches = [staticCacheName, imgsCacheName];
-
+// eeeee
 self.addEventListener('install', (event) => {
     var urlsToCache = [
         '/',
@@ -9,9 +9,6 @@ self.addEventListener('install', (event) => {
         'js/restaurant_info.js',
         'js/dbhelper.js',
         'js/idb.js',
-        'js/toastr.min.js',
-        'js/jquery-3.3.1.min.js',
-        // 'data/restaurants.json',
         'css/styles.css',
         'css/home.css',
         'css/responsive-home.css',

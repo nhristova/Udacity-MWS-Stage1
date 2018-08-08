@@ -4,7 +4,7 @@ let restaurants,
 var map
 var markers = []
 
-/*globals toastr DBHelper idb*/
+/*globals DBHelper*/
 
 
 /**
@@ -196,29 +196,10 @@ window.onload = (ev) => {
 */
 
 
-toastr.options = {
-    "closeButton": false,
-    "closeOnHover": false,
-    "debug": false,
-    "newestOnTop": false,
-    "progressBar": false,
-    "positionClass": "toast-top-right",
-    "preventDuplicates": false,
-    "onclick": false,
-    "showDuration": "300",
-    "hideDuration": "1000",
-    "timeOut": "5000",
-    "extendedTimeOut": "0",
-    "showEasing": "swing",
-    "hideEasing": "linear",
-    "showMethod": "fadeIn",
-    "hideMethod": "fadeOut",
-    "tapToDismiss": true
-}
 
 function MainController() {
     if (!navigator.onLine) {
-        toastr.error('No internet connection, loading from cache.');
+        toasty.showMessage('No internet connection, loading from cache.', toasty.type.error);
     }
 
     // this.dbPromise = openDatabase();
@@ -229,8 +210,8 @@ MainController.prototype.registerServiceWorker = function() {
     // Check support for serviceWorker
     // skip SW functions if no support
     if (!navigator.serviceWorker) { return; }
-    toastr.warning('Starting SW registration');
-
+    toasty.showMessage('Starting SW registration', toasty.type.warning);
+    
     var mainController = this;
 
     navigator.serviceWorker.register('/sw.js')
@@ -301,17 +282,47 @@ MainController.prototype.trackInstalling = function(worker) {
 MainController.prototype.updateReady = function(worker) {
     var thisWorker = worker;
 
-    toastr.options.onclick = function(event) {
+    const updateClick = function(event) {
         var dataAction = event.target.getAttribute('data-action');
 
         if (dataAction === 'update') {
             thisWorker.postMessage({ action: 'skipWaiting' });
         }
 
-        $(event.target).closest('.toast').remove();
+        event.target.closest('.toast').remove();
     };
 
-    toastr.info('New version ready,  update?<br /><button type="button" class="btn btn-default" data-action="update" id="okBtn">Yes</button> <button type="button" class="btn clear" data-action="noupdate" id="noBtn">No</button>', '', { timeOut: 0, extendedTimeOut: 0, tapToDismiss: false });
+    toasty.showMessage('New version ready,  update?<br /><button type="button" class="btn btn-default" data-action="update" id="okBtn">Yes</button> <button type="button" class="btn btn-default" data-action="noupdate" id="noBtn">No</button>', toasty.type.info, {onclick: updateClick});
 }
 
+function ToastrService() {
+    this.type = {
+        error: 'toast-error',
+        info: 'toast-info',
+        success: 'toast-success',
+        warning: 'toast-warning'
+    };
+
+    this.options = {
+        onclick: false,
+        timeOut: 5000
+    };
+}
+ToastrService.prototype.showMessage = function(text, toastClass, options = {}) {
+    let container = document.getElementById('toast-container');
+    let message = document.createElement('div');
+    message.classList.add('toast', toastClass);
+    message.innerHTML = text;
+
+    container.insertAdjacentElement('beforeend', message);
+
+    if(options.onclick || toasty.options.onclick) {
+        message.addEventListener('click', toasty.options.onclick ? toasty.options.onclick : options.onclick);
+        return;
+    };
+
+    setTimeout(() => container.removeChild(message), this.options.timeOut);
+}
+
+const toasty = new ToastrService();
 new MainController();
