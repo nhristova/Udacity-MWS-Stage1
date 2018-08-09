@@ -149,3 +149,84 @@ header {
 #restaurant-hours td {
     color: #666;
 }
+
+/* ====================== Review modal ====================== */
+/* Based on https://www.w3schools.com/howto/howto_css_modals.asp */
+
+/* The Modal (background) */
+.modal {
+    position: fixed; /* Stay in place */
+    z-index: 9999; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+    background-color: #fefefe;
+    border-radius: 20px 0;
+    margin: 15% auto; /* 15% from the top and centered */
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+}
+
+.modal-header {
+    color: #fff;
+    background-color: #333;
+    border-radius: 20px 0 0 0;
+    padding: 20px;
+    position: relative;
+}
+
+.modal-body {
+    padding: 0 20px;
+}
+
+.modal-footer {
+    padding: 20px;
+}
+
+#review-modal h2{
+    margin: 0;
+}
+
+#review-modal textarea {
+    width: 100%;
+    padding: 5px;
+}
+
+/* The Close Button */
+.close {
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    right: 20px;
+    top: 20px;
+}
+
+.close:hover,
+.close:focus {
+    color: #fff;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+
+.star {
+    font-size: 30px;
+    cursor: context-menu;
+}
+
+.star-empty {    
+    color: #888;
+}
+
+.star-checked {
+    color: orange;
+}

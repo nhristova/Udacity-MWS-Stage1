@@ -1,5 +1,5 @@
 let restaurant;
-var map;
+let map;
 
 /**
  * Initialize Google map, called from HTML.
@@ -171,3 +171,32 @@ getParameterByName = (name, url) => {
         return '';
     return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
+
+/* Based on https://www.w3schools.com/howto/howto_css_modals.asp */
+(function() {
+    // Get the modal
+    const modal = document.getElementById('review-modal');
+
+    // Get the button that opens the modal
+    const btn = document.getElementById('open-modal');
+
+    // Get the <span> element that closes the modal
+    const span = document.getElementById('close');
+
+    // When the user clicks on the button, open the modal 
+    btn.addEventListener('click', function() {
+        modal.classList.remove("isHidden");
+    });
+
+    // When the user clicks on <span> (x), close the modal
+    span.addEventListener('click', function() {
+        modal.classList.add("isHidden");
+    });
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.addEventListener('click', function(event) {
+        if (event.target == modal) {
+            modal.classList.add("isHidden");
+        }
+    });
+})()

@@ -12,6 +12,10 @@
     border: 2px solid #ea4335 !important;
 }
 
+.isHidden {
+    display: none;
+}
+
 :root, html, body {
     margin: 0;
     padding: 0;
@@ -185,4 +189,46 @@ nav h2 a {
 .breadcrumb li a:hover {
     color: #01447e;
     text-decoration: underline;
+}
+
+
+/* ====================== Bootstrap styles copy ====================== */
+/* Copied just the styles used to reduce loading time and be able to tweak them */
+
+.btn {
+    display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.btn-default {
+    color: #333;
+    background-color: #fff;
+    border-color: #ccc;
+}
+
+.btn-warning {
+    border: 0;
+    background-color: #ffa500;
+    border-radius: 0 10px;
+    color: #fff;
+    font-size: 1em;
+    padding: 10px 15px;
+    text-transform: uppercase;
 }
