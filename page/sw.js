@@ -68,7 +68,7 @@ self.addEventListener('fetch', (event) => {
             console.log('ERROR: ', error);
             return new Response('Connection error');
         })
-    )
+    );
 });
 
 // SW is being updated, need to delete old cache
@@ -81,7 +81,7 @@ self.addEventListener('activate', (event) => {
                 .map(name => caches.delete(name))
             );
         })
-    )
+    );
 });
 
 self.addEventListener('message', (event) => {
@@ -106,6 +106,6 @@ function serveFromCache(request, cacheName, storageUrl) {
                     cache.put(storageUrl, networkResponse.clone());
                     return networkResponse;
                 });
-            })
+            });
         });
 }

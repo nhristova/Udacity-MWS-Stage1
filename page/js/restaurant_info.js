@@ -25,12 +25,12 @@ window.initMap = () => {
  */
 fetchRestaurantFromURL = (callback) => {
     if (self.restaurant) { // restaurant already fetched!
-        callback(null, self.restaurant)
+            callback(null, self.restaurant);
         return;
     }
     const id = getParameterByName('id');
     if (!id) { // no id found in URL
-        error = 'No restaurant id in URL'
+            const error = 'No restaurant id in URL';
         callback(error, null);
     } else {
         DBHelper.fetchRestaurantById(id, (error, restaurant) => {
@@ -40,10 +40,10 @@ fetchRestaurantFromURL = (callback) => {
                 return;
             }
             fillRestaurantHTML();
-            callback(null, restaurant)
+                callback(null, restaurant);
         });
     }
-}
+    };
 
 /**
  * Create restaurant HTML and add it to the webpage
@@ -63,7 +63,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
     image.alt = restaurant.description;
     image.src = imgSrc;
     image.srcset = `${imgSrc.replace('.jpg', '_small.jpg')} 400w, ${imgSrc} 800w`;
-    image.sizes = "(min-width: 481px) 50vw, 100vw";
+        image.sizes = '(min-width: 481px) 50vw, 100vw';
 
     const cuisine = document.getElementById('restaurant-cuisine');
     cuisine.innerHTML = restaurant.cuisine_type;
@@ -75,7 +75,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
     }
     // fill reviews
     fillReviewsHTML();
-}
+    };
 
 /**
  * Create restaurant operating hours HTML table and add it to the webpage.
@@ -97,12 +97,12 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
 
         hours.appendChild(row);
     }
-}
+    };
 
 /**
  * Create all reviews HTML and add them to the webpage.
  */
-fillReviewsHTML = (reviews = self.restaurant.reviews) => {
+    const fillReviewsHTML = (reviews = this.restaurant.reviews) => {
     const container = document.getElementById('reviews-container');
     const title = document.createElement('h3');
     title.innerHTML = 'Reviews';
@@ -119,12 +119,12 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
         ul.appendChild(createReviewHTML(review));
     });
     container.appendChild(ul);
-}
+    };
 
 /**
  * Create review HTML and add it to the webpage.
  */
-createReviewHTML = (review) => {
+    const createReviewHTML = (review) => {
     const li = document.createElement('li');
     const name = document.createElement('p');
     name.innerHTML = review.name;
@@ -143,7 +143,7 @@ createReviewHTML = (review) => {
     li.appendChild(comments);
 
     return li;
-}
+    };
 
 /**
  * Add restaurant name to the breadcrumb navigation menu
@@ -154,12 +154,12 @@ fillBreadcrumb = (restaurant = self.restaurant) => {
     li.setAttribute('aria-current', 'page');
     li.innerHTML = restaurant.name;
     breadcrumb.appendChild(li);
-}
+    };
 
 /**
  * Get a parameter by name from page URL.
  */
-getParameterByName = (name, url) => {
+    const getParameterByName = (name, url) => {
     if (!url)
         url = window.location.href;
     name = name.replace(/[\[\]]/g, '\\$&');
@@ -170,6 +170,7 @@ getParameterByName = (name, url) => {
     if (!results[2])
         return '';
     return decodeURIComponent(results[2].replace(/\+/g, ' '));
+    };
 }
 
 /* Based on https://www.w3schools.com/howto/howto_css_modals.asp */
@@ -185,18 +186,18 @@ getParameterByName = (name, url) => {
 
     // When the user clicks on the button, open the modal 
     btn.addEventListener('click', function() {
-        modal.classList.remove("isHidden");
+        modal.classList.remove('isHidden');
     });
 
     // When the user clicks on <span> (x), close the modal
     span.addEventListener('click', function() {
-        modal.classList.add("isHidden");
+        modal.classList.add('isHidden');
     });
 
     // When the user clicks anywhere outside of the modal, close it
     window.addEventListener('click', function(event) {
         if (event.target == modal) {
-            modal.classList.add("isHidden");
+            modal.classList.add('isHidden');
         }
     });
-})()
+})();

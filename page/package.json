@@ -1,0 +1,26 @@
+{
+  "name": "udacity-mws-restaurant-reviews",
+  "version": "3.0.0",
+  "description": "Project for the Udacity Mobile Web Specialist nano degree 2018",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nhristova/udacity-mws-2018-project-restaurant-reviews.git"
+  },
+  "keywords": [
+    "MWS",
+    "Udacity"
+  ],
+  "author": "Nadezhda Hristova",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nhristova/udacity-mws-2018-project-restaurant-reviews/issues"
+  },
+  "homepage": "https://github.com/nhristova/udacity-mws-2018-project-restaurant-reviews#readme",
+  "devDependencies": {
+    "eslint-config-google": "^0.9.1"
+  }
+}
