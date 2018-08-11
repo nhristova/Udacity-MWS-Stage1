@@ -1,3 +1,6 @@
+import { DBHelper } from './dbhelper.js';
+import { MainController } from './controller.js';
+
 let restaurants,
     neighborhoods,
     cuisines;
@@ -13,6 +16,7 @@ let markers = [];
 document.addEventListener('DOMContentLoaded', (event) => {
     fetchNeighborhoods();
     fetchCuisines();
+    updateRestaurants();
 });
 
 /**
@@ -34,6 +38,8 @@ const fetchNeighborhoods = () => {
  */
 const fillNeighborhoodsHTML = (neighborhoods = self.neighborhoods) => {
     const select = document.getElementById('neighborhoods-select');
+    select.addEventListener('change', updateRestaurants);
+
     neighborhoods.forEach(neighborhood => {
         const option = document.createElement('option');
         option.innerHTML = neighborhood;
@@ -61,6 +67,7 @@ const fetchCuisines = () => {
  */
 const fillCuisinesHTML = (cuisines = self.cuisines) => {
     const select = document.getElementById('cuisines-select');
+    select.addEventListener('change', updateRestaurants);
 
     cuisines.forEach(cuisine => {
         const option = document.createElement('option');
@@ -73,18 +80,18 @@ const fillCuisinesHTML = (cuisines = self.cuisines) => {
 /**
  * Initialize Google map, called from HTML.
  */
-window.initMap = () => {
-    let loc = {
-        lat: 40.722216,
-        lng: -73.987501
-    };
-    self.map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 12,
-        center: loc,
-        scrollwheel: false
-    });
-    updateRestaurants();
-}
+// window.initMap = () => {
+//     let loc = {
+//         lat: 40.722216,
+//         lng: -73.987501
+//     };
+//     self.map = new google.maps.Map(document.getElementById('map'), {
+//         zoom: 12,
+//         center: loc,
+//         scrollwheel: false
+//     });
+//     //updateRestaurants();
+// };
 
 /**
  * Update page and map for current restaurants.
@@ -101,11 +108,12 @@ const updateRestaurants = () => {
 
     DBHelper.fetchRestaurantByCuisineAndNeighborhood(cuisine, neighborhood, (error, restaurants) => {
         if (error) { // Got an error!
-            console.error(error);
+            console.log(error);
         } else {
             resetRestaurants(restaurants);
             fillRestaurantsHTML();
-}
+            addMarkersToMap();
+        }
     });
 };
 
@@ -118,22 +126,24 @@ const resetRestaurants = (restaurants) => {
     const ul = document.getElementById('restaurants-list');
     ul.innerHTML = '';
 
-    // Remove all map markers
-    self.markers.forEach(m => m.setMap(null));
-    self.markers = [];
     self.restaurants = restaurants;
-}
+    // Remove all map markers
+    if(markers){
+        markers.forEach(m => m.setMap(null));
+        markers = [];
+    }
+};
 
 /**
- * Create all restaurants HTML and add them to the webpage.
+ * Create all restaurants HTML and add them to the web-page.
  */
 const fillRestaurantsHTML = (restaurants = self.restaurants) => {
     const ul = document.getElementById('restaurants-list');
     restaurants.forEach(restaurant => {
         ul.append(createRestaurantHTML(restaurant));
     });
-    addMarkersToMap();
-}
+    //addMarkersToMap();
+};
 
 /**
  * Create restaurant HTML.
@@ -184,7 +194,7 @@ const addMarkersToMap = (restaurants = self.restaurants) => {
         google.maps.event.addListener(marker, 'click', () => {
             window.location.href = marker.url;
         });
-        self.markers.push(marker);
+        markers.push(marker);
     });
 };
 

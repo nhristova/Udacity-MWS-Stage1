@@ -33,10 +33,10 @@
         <section id="restaurants">
             <div class="filter-options">
                 <h3>Filter Results</h3>
-                <select id="neighborhoods-select" name="neighborhoods" onchange="updateRestaurants()" aria-label="Selected neighborhoods">
+                <select id="neighborhoods-select" name="neighborhoods" aria-label="Selected neighborhoods">
                             <option value="all">All Neighborhoods</option>
                         </select>
-                <select id="cuisines-select" name="cuisines" onchange="updateRestaurants()" aria-label="Selected cuisines">
+                <select id="cuisines-select" name="cuisines" aria-label="Selected cuisines">
                             <option value="all">All Cuisines</option>
                         </select>
             </div>
@@ -55,12 +55,25 @@
         </a> All Rights Reserved.
     </footer>
 
-    <script src="js/idb.js"></script>
-    <script src="js/dbhelper.js"></script>
-    <script src="js/main.js"></script>
-
+    <!-- <script src="js/idb.js"></script>
+    <script src="js/dbhelper.js"></script> -->
+    <script src="js/main.js" type="module"></script>
+    <script>
+        window.initMap = () => {
+            let loc = {
+                lat: 40.722216,
+                lng: -73.987501
+            };
+            self.map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 12,
+                center: loc,
+                scrollwheel: false
+            });
+            //updateRestaurants();
+        };
+        </script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD7KC8kdJmtPQc1QOG9QFJP-I9Nd-i5eC0&libraries=places&callback=initMap"></script>
-
+    
 </body>
 
 </html>

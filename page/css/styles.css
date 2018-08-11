@@ -193,7 +193,7 @@ nav h2 a {
 
 
 /* ====================== Bootstrap styles copy ====================== */
-/* Copied just the styles used to reduce loading time and be able to tweak them */
+/* Copied just the styles used for toasty messages to reduce loading time and be able to tweak them */
 
 .btn {
     display: inline-block;
