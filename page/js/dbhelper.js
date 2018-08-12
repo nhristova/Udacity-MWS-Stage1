@@ -16,7 +16,7 @@ export class DBHelper {
      */
     static get DATABASE_URL() {
         const port = 1337; // Change this to your server port
-        return `http://localhost:${port}/restaurants`;
+        return `http://localhost:${port}/`;
     }
 
     /**
@@ -25,7 +25,7 @@ export class DBHelper {
     static getRestaurants(callback) {
         // if there are restaurants in IDB, show them
 
-        DBHelper.loadRestaurants()
+        DBHelper.loadIdbStore('restaurants')
             .then(restaurantsIdb => {
                 if (restaurantsIdb && restaurantsIdb.length) {
                     console.log('Getting restaurants from IDB');
@@ -35,33 +35,36 @@ export class DBHelper {
                 // Restaurants were not found in IDB, return true to fetch from network
                 return true;
             })
-            .then(fetchFromNetwork => fetchFromNetwork && DBHelper.fetchRestaurantsFromNetwork())
-            .then(restaurants => {
-                restaurants && callback(null, restaurants);
-            })
+            .then(fetchFromNetwork => fetchFromNetwork && DBHelper.fetchFromNetwork('restaurants'))
+            .then(restaurants => restaurants && callback(null, restaurants))
             .catch(error => callback(error, null));
     }
 
-    static fetchRestaurantsFromNetwork() {
-        return fetch(DBHelper.DATABASE_URL)
-            .then(response => response.json())
-            .then(restaurants => {
-                const updatedIndex = restaurants.findIndex(r => {
-                    const rUpdate = new Date(r.updatedAt);
-                    if (rUpdate > lastUpdate) {
-                        lastUpdate = rUpdate;
-                    }
-                    return true;
-                });
 
+    static fetchFromNetwork(path) {
+        const url = DBHelper.DATABASE_URL + path;
+
+        return fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                // TODO: While in dev don't save in db. Uncomment for prod
+                // const updatedIndex = data.findIndex(r => {
+                //     const rUpdate = new Date(r.updatedAt);
+                //     if (rUpdate > lastUpdate) {
+                //         lastUpdate = rUpdate;
+                //     }
+                //     return true;
+                // });
+
+                // TODO: Improve!!
                 // if any restaurant has been updated, save them all
                 // wouldn't be efficient for big data sets
-                if (updatedIndex >= 0 && !savingRestaurants) {
-                    savingRestaurants = true;
-                    DBHelper.saveRestaurants(restaurants);
-                }
+                // if (updatedIndex >= 0 && !savingRestaurants) {
+                //     savingRestaurants = true;
+                DBHelper.saveIdbStore(path, data);
+                // }
 
-                return restaurants;
+                return data;
             });
     }
 
@@ -76,12 +79,34 @@ export class DBHelper {
             } else {
                 const restaurant = restaurants.find(r => r.id == id);
                 if (restaurant) { // Got the restaurant
-                    callback(null, restaurant);
+                    // Get reviews
+                    // TODO: improve
+                    if(!restaurant.reviews){
+                        DBHelper.getReviewsById(restaurant.id)
+                            .then(result =>  {
+                                restaurant.reviews = result;
+                                callback(null, restaurant);
+                            });
+                    }
                 } else { // Restaurant does not exist in the database
                     callback('Restaurant does not exist', null);
                 }
             }
         });
+    }
+
+    static getReviewsById(restaurantId) {
+        return DBHelper.loadIdbStore('reviews')
+            .then(reviewsIdb => {
+                // TODO: check what this receives
+                if(reviewsIdb.length > 0){
+                    return Promise.resolve(reviewsIdb);
+                }
+
+                return DBHelper.fetchFromNetwork('reviews');
+            })
+            .then(reviews => reviews.filter(review => review.restaurant_id === restaurantId))
+            .catch(error => console.log('Error getting reviews', error));
     }
 
     /**
@@ -219,36 +244,37 @@ export class DBHelper {
             switch (upgradeDb.oldVersion) {
             case 0:
                 upgradeDb.createObjectStore('restaurants', { keyPath: 'id' });
+                upgradeDb.createObjectStore('reviews', { keyPath: 'id' });
             }
         });
     }
 
-    static loadRestaurants() {
+    static loadIdbStore(storeName) {
         // check if it's ok to call openDatabase twice
         return DBHelper.openDatabase()
             .then(db => {
                 if (!db) return;
 
-                const tx = db.transaction('restaurants');
-                const store = tx.objectStore('restaurants');
+                const tx = db.transaction(storeName);
+                const store = tx.objectStore(storeName);
 
                 return store.getAll();
             });
     }
 
-    static saveRestaurants(restaurants) {
+    static saveIdbStore(storeName, data) {
         // check if it's ok to call openDatabase twice
         return DBHelper.openDatabase()
             .then(db => {
-                const tx = db.transaction('restaurants', 'readwrite');
-                const store = tx.objectStore('restaurants');
+                const tx = db.transaction(storeName, 'readwrite');
+                const store = tx.objectStore(storeName);
 
-                restaurants.forEach(restaurant => store.put(restaurant));
+                data.forEach(item => store.put(item));
 
                 return tx.complete;
             }).then(() => {
                 savingRestaurants = false;
-                console.log('Data saved to IDB');
+                console.log(`Data saved to IDB, store ${storeName}`);
             });
     }
 }

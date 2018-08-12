@@ -55,7 +55,7 @@
         <!-- Beginning reviews -->
         <section id="reviews-container">
             <!-- Trigger/Open The Modal -->
-            <button id="open-modal" class="btn-warning">Add Review</button>
+            <button id="open-modal" class="btn btn-warning">Add Review</button>
 
             <ul id="reviews-list"></ul>
         </section>
@@ -69,20 +69,23 @@
                     <h2>New review</h2>
                 </header>
                 <div class="modal-body">
-                    <p>Tell us what you think!</p>
-                    <p>Rating: </p>
-                    <div>
-                        <span id="star1" class="star star-checked">★</span>
-                        <span id="star2" class="star star-checked">★</span>
-                        <span id="star3" class="star star-checked">★</span>
-                        <span id="star4" class="star star-empty">★</span>
-                        <span id="star5" class="star star-empty">★</span>
-
-                    </div>
-                    <textarea name="review-area" id="review-textarea" cols="30" rows="10"></textarea>
+                    <form id="new-review-form" method="POST">
+                        <p>Tell us what you think!</p>
+                        <p>Your name: </p>
+                        <p>Rating: </p>
+                        <div id="rating">
+                            <span id="star1" class="star star-checked">★</span>
+                            <span id="star2" class="star star-checked">★</span>
+                            <span id="star3" class="star star-checked">★</span>
+                            <span id="star4" class="star star-empty">★</span>
+                            <span id="star5" class="star star-empty">★</span>
+                        </div>
+                        <textarea name="review-area" id="review-textarea" cols="30" rows="10"></textarea>
+                    </form>
                 </div>
                 <footer class="modal-footer">
-                    <button class="btn btn-default">Save</button>
+                    <button class="btn btn-warning" form="new-review-form">Save</button>
+                    <button id="cancel" class="btn btn-default">Cancel</button>
                 </footer>
             </div>
         </section>

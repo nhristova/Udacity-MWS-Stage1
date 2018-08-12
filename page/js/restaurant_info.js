@@ -145,7 +145,9 @@ function RestaurantService() {
         li.appendChild(name);
 
         const date = document.createElement('p');
-        date.innerHTML = review.date;
+        const dateValue = new Date(review.createdAt);
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        date.innerHTML = dateValue.toLocaleDateString('en-US', options); 
         li.appendChild(date);
 
         const rating = document.createElement('p');
