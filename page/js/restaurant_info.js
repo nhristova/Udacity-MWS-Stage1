@@ -189,6 +189,72 @@ function RestaurantService() {
         return decodeURIComponent(results[2].replace(/\+/g, ' '));
     };
 
+    const fillModalHTML = function (restaurant = self.restaurant) {
+        const modalContent = document.getElementById('review-modal');
+
+        const content = document.createElement('div');
+        content.id = 'modal-content';
+        content.classList.add('modal-content');
+
+        const header = document.createElement('header');
+        header.classList.add('modal-header');
+
+        const close = document.createElement('span');
+        close.innerHTML = '&times;';
+        close.id = 'close';
+        close.classList.add('close');
+        header.appendChild(close);
+        
+        const heading = document.createElement('h2');
+        heading.innerHTML = `New review for ${restaurant.name}`;
+        header.appendChild(heading);
+        content.appendChild(header);
+
+        const body = document.createElement('div');
+        body.classList.add('modal-body');
+        const form = document.createElement('form');
+        form.id = 'new-review-form';
+        form.action ='http://localhost:1337/reviews/';
+        form.method = 'POST';
+        form.innerHTML = `<div>
+                <input type="hidden" id="restaurant_id" name="restaurant_id" value=${restaurant.id}>
+                <label for="name">Name:
+                </label>
+                <input id="name" name="reviewer_name" type="text">
+            </div>
+            <div>
+                <label for="rating">Rating: </label>
+                <select id="rating" name="rating">
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option>5</option>
+                </select>
+            </div>
+            <div id="star-rating">
+                <span id="star1" class="star star-checked">★</span>
+                <span id="star2" class="star star-checked">★</span>
+                <span id="star3" class="star star-checked">★</span>
+                <span id="star4" class="star star-empty">★</span>
+                <span id="star5" class="star star-empty">★</span>
+            </div>
+            <div>
+                <label for="review-textarea">Your comments:</label>
+                <textarea id="review-textarea" name="comments" cols="30" rows="10"></textarea>
+            </div>`;
+        body.appendChild(form);
+        content.appendChild(body);
+
+        const footer = document.createElement('footer');
+        footer.classList.add('modal-footer');
+        footer.innerHTML = `<button class="btn btn-warning" form="new-review-form" type="submit">Save</button>
+        <button id="cancel" class="btn btn-default">Cancel</button>`;
+        content.appendChild(footer);
+        
+        modalContent.appendChild(content);
+    };
+
 
     /* Based on https://www.w3schools.com/howto/howto_css_modals.asp */
     function initModal() {
@@ -199,8 +265,10 @@ function RestaurantService() {
         window.addEventListener('click', function(event) {
             if (event.target === modal || event.target.id === 'cancel' || event.target.id === 'close') {
                 modal.classList.add('isHidden');
+                modal.innerHTML = '';
             } else if(event.target.id === 'open-modal'){
                 modal.classList.remove('isHidden');
+                fillModalHTML();
             }
         });
     }

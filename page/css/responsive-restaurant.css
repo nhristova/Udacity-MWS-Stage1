@@ -36,6 +36,10 @@ body {}
     #reviews-list li:nth-child(odd) {
         margin-right: 10px;
     }
+
+    .modal-content {
+        max-width: 70%;
+    }
 }
 
 @media screen and (max-width: 720px) {
@@ -78,6 +82,10 @@ body {}
 @media screen and (min-width: 721px) {
     #maincontent {
         flex-direction: column;
+    }
+
+    .modal-content {
+        max-width: 400px;
     }
 }
 
