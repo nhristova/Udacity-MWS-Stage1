@@ -1,8 +1,17 @@
 import { DBHelper } from './dbhelper.js';
+
+/* globals GoogleMapsLoader, google */
+
+document.addEventListener('DOMContentLoaded', (event) => {
+    GoogleMapsLoader.KEY = 'AIzaSyD7KC8kdJmtPQc1QOG9QFJP-I9Nd-i5eC0';
+    GoogleMapsLoader.LIBRARIES = ['places'];
+    GoogleMapsLoader.load(initMap);
+});
+
 /**
  * Initialize Google map, called from HTML.
  */
-window.initMap = () => {
+const initMap = () => {
     restaurantService.fetchRestaurantFromURL((error, restaurant) => {
         if (error) { // Got an error!
             console.error(error);
