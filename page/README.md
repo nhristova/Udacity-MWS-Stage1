@@ -1,4 +1,4 @@
-# Restaurant reviews page - stage 2
+# Restaurant reviews page - stage 3
 
 
 ### Preconditions
