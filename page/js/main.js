@@ -1,13 +1,13 @@
 import { DBHelper } from './dbhelper.js';
 import { MainController } from './controller.js';
 
+/* globals GoogleMapsLoader, google */
+
 let restaurants,
     neighborhoods,
     cuisines;
 let map;
 let markers = [];
-
-/*globals DBHelper*/
 
 
 /**
@@ -17,7 +17,15 @@ document.addEventListener('DOMContentLoaded', (event) => {
     fetchNeighborhoods();
     fetchCuisines();
     updateRestaurants();
+    GoogleMapsLoader.KEY = 'AIzaSyD7KC8kdJmtPQc1QOG9QFJP-I9Nd-i5eC0';
+    GoogleMapsLoader.LIBRARIES = ['places'];
+    GoogleMapsLoader.load(initMap);
 });
+
+
+window.onload = () => {
+    addMarkersToMap();
+};
 
 /**
  * Fetch all neighborhoods and set their HTML.
@@ -78,20 +86,20 @@ const fillCuisinesHTML = (cuisines = self.cuisines) => {
 };
 
 /**
- * Initialize Google map, called from HTML.
+ * Initialize Google map.
  */
-// window.initMap = () => {
-//     let loc = {
-//         lat: 40.722216,
-//         lng: -73.987501
-//     };
-//     self.map = new google.maps.Map(document.getElementById('map'), {
-//         zoom: 12,
-//         center: loc,
-//         scrollwheel: false
-//     });
-//     //updateRestaurants();
-// };
+const initMap = () => {
+    let loc = {
+        lat: 40.722216,
+        lng: -73.987501
+    };
+    self.map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 12,
+        center: loc,
+        scrollwheel: false
+    });
+    //updateRestaurants();
+};
 
 /**
  * Update page and map for current restaurants.
@@ -112,7 +120,7 @@ const updateRestaurants = () => {
         } else {
             resetRestaurants(restaurants);
             fillRestaurantsHTML();
-            addMarkersToMap();
+            // addMarkersToMap();
         }
     });
 };
@@ -128,7 +136,7 @@ const resetRestaurants = (restaurants) => {
 
     self.restaurants = restaurants;
     // Remove all map markers
-    if(markers){
+    if (markers) {
         markers.forEach(m => m.setMap(null));
         markers = [];
     }

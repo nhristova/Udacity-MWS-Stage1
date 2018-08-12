@@ -1,14 +1,15 @@
 const staticCacheName = 'restaurant-static-v5';
 const imgsCacheName = 'restaurant-imgs';
 const allCaches = [staticCacheName, imgsCacheName];
-// eeeee
+
 self.addEventListener('install', (event) => {
-    var urlsToCache = [
+    const urlsToCache = [
         '/',
         'js/main.js',
         'js/restaurant_info.js',
         'js/dbhelper.js',
         'js/idb.js',
+        'js/Google.min.js',
         'css/styles.css',
         'css/home.css',
         'css/responsive-home.css',

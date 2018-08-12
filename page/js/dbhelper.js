@@ -32,9 +32,10 @@ export class DBHelper {
                     callback(null, restaurantsIdb);
                     return false;
                 }
+                // Restaurants were not found in IDB, return true to fetch from network
                 return true;
             })
-            .then(getFromNetwork => getFromNetwork && DBHelper.fetchRestaurantsFromNetwork())
+            .then(fetchFromNetwork => fetchFromNetwork && DBHelper.fetchRestaurantsFromNetwork())
             .then(restaurants => {
                 restaurants && callback(null, restaurants);
             })
