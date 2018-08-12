@@ -98,5 +98,5 @@ MainController.prototype.updateReady = function(worker) {
         event.target.closest('.toast').remove();
     };
 
-    toasty.showMessage('New version ready,  update?<br /><button type="button" class="btn btn-default" data-action="update" id="okBtn">Yes</button> <button type="button" class="btn btn-default" data-action="noupdate" id="noBtn">No</button>', toasty.type.info, {onclick: updateClick});
+    toasty.showMessage('New SW version ready,  update?<br /><button type="button" class="btn btn-default" data-action="update" id="okBtn">Yes</button> <button type="button" class="btn btn-default" data-action="noupdate" id="noBtn">No</button>', toasty.type.info, {onclick: updateClick});
 };

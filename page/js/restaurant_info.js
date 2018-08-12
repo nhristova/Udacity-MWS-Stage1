@@ -31,11 +31,12 @@ function RestaurantService() {
 
     this.restaurant;
     this.map;
+    initModal();
 
     /**
      * Get current restaurant from page URL.
      */
-    var self = this;
+    const self = this;
 
     this.fetchRestaurantFromURL = (callback) => {
         if (self.restaurant) { // restaurant already fetched!
@@ -187,36 +188,22 @@ function RestaurantService() {
             return '';
         return decodeURIComponent(results[2].replace(/\+/g, ' '));
     };
+
+
+    /* Based on https://www.w3schools.com/howto/howto_css_modals.asp */
+    function initModal() {
+        // Get the modal
+        const modal = document.getElementById('review-modal');
+
+        // When the user clicks anywhere outside of the modal, on the x, or cancel button, close it
+        window.addEventListener('click', function(event) {
+            if (event.target === modal || event.target.id === 'cancel' || event.target.id === 'close') {
+                modal.classList.add('isHidden');
+            } else if(event.target.id === 'open-modal'){
+                modal.classList.remove('isHidden');
+            }
+        });
+    }
 }
-
-/* Based on https://www.w3schools.com/howto/howto_css_modals.asp */
-(function() {
-    // Get the modal
-    const modal = document.getElementById('review-modal');
-
-    // Get the button that opens the modal
-    const btn = document.getElementById('open-modal');
-
-    // Get the <span> element that closes the modal
-    const span = document.getElementById('close');
-
-    // When the user clicks on the button, open the modal 
-    btn.addEventListener('click', function() {
-        modal.classList.remove('isHidden');
-    });
-
-    // When the user clicks on <span> (x), close the modal
-    span.addEventListener('click', function() {
-        modal.classList.add('isHidden');
-    });
-
-    // When the user clicks anywhere outside of the modal, close it
-    window.addEventListener('click', function(event) {
-        if (event.target == modal) {
-            modal.classList.add('isHidden');
-        }
-    });
-})();
-
 
 var restaurantService = new RestaurantService();

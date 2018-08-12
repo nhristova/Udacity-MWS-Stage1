@@ -184,6 +184,7 @@ const createRestaurantHTML = (restaurant) => {
     const more = document.createElement('a');
     more.innerHTML = 'View Details';
     more.href = DBHelper.urlForRestaurant(restaurant);
+    more.classList.add('btn', 'btn-warning');
     /* The full stop in the beginning of the aria-label is 
     for the screen reader to make a pause after reading the address */
     more.setAttribute('aria-label', '. Details for restaurant: ' + restaurant.name);
