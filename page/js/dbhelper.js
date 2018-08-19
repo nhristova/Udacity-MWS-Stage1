@@ -57,11 +57,13 @@ export class DBHelper {
                 // wouldn't be efficient for big data sets
                 // if (updatedIndex >= 0 && !savingRestaurants) {
                 //     savingRestaurants = true;
+
                 DBHelper.saveIdbStore(path, data);
                 // }
 
                 return data;
-            });
+            })
+            .catch(error => console.log('Error fetching reviews from network', error));
     }
 
     /** Fetch a restaurant by its ID.*/
@@ -103,6 +105,48 @@ export class DBHelper {
             })
             .then(reviews => reviews.filter(review => review.restaurant_id === restaurantId))
             .catch(error => console.log('Error getting reviews', error));
+    }
+
+    static saveNewReview(review){
+        // if online, save the regular way 
+        //1. networ 2 store otherwise no id
+        if(navigator.onLine){
+            return DBHelper.saveToNetwork('reviews', review)
+                .then(result => {
+                    if (result) {
+                        DBHelper.saveInStore('reviews', result);
+                    }
+                    return result;
+                })
+                .catch(error => console.log('Error saving review', error));
+        }
+
+        // if offline, save to outbox
+        // !navigator.online && DBHelper.saveIdbStore('outbox', review)
+        //     .then(result => {
+        //         console.log(`Review saved to outbox ${result}`);
+        //         return result;
+        //     })
+        //     .catch(error => console.log('Error saving review to outbox', error));
+    }
+
+    static saveToNetwork(path, review){
+        const url = DBHelper.DATABASE_URL + path;
+        const init = {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(review)
+        };
+
+        //'Content-Type', 'application/x-www-form-urlencoded'
+
+        return fetch(url, init)
+            .then(response => response.json())
+            .then(dataJson => dataJson)
+            .catch(error => console.error('Error saving reviews', error));
     }
 
     /** Fetch restaurants by a cuisine type with proper error handling. */
@@ -243,12 +287,16 @@ export class DBHelper {
     }
 
     static saveIdbStore(storeName, data) {
+        // accept array or single element
+        data = [].concat(data || []);
+
         // check if it's ok to call openDatabase twice
         return DBHelper.openDatabase()
             .then(db => {
                 const tx = db.transaction(storeName, 'readwrite');
                 const store = tx.objectStore(storeName);
 
+                // TODO: Handle update to existing items
                 data.forEach(item => store.put(item));
 
                 return tx.complete;

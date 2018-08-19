@@ -83,7 +83,10 @@
     <!-- <script src="js/idb.js"></script> -->
     <!-- <script src="js/dbhelper.js"></script> -->
     <!-- Main javascript file -->
-    <script src="js/restaurant_info.js" type="module"></script>
+    <script type="module">
+        import { RestaurantService } from './js/restaurant_info.js';
+        const rs = new RestaurantService();
+    </script>
     <!-- Google Maps -->
     <script async defer src="js/Google.min.js"></script>
     <!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD7KC8kdJmtPQc1QOG9QFJP-I9Nd-i5eC0&libraries=places&callback=initMap"></script> -->

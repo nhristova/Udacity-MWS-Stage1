@@ -2,34 +2,34 @@ import { DBHelper } from './dbhelper.js';
 
 /* globals GoogleMapsLoader, google */
 
-document.addEventListener('DOMContentLoaded', (event) => {
-    GoogleMapsLoader.KEY = 'AIzaSyD7KC8kdJmtPQc1QOG9QFJP-I9Nd-i5eC0';
-    GoogleMapsLoader.LIBRARIES = ['places'];
-    GoogleMapsLoader.load(initMap);
-});
-
-const initMap = () => {
-    restaurantService.fetchRestaurantFromURL((error, restaurant) => {
-    /** Initialize Google map, not called from HTML any more, but when DOMContentLoaded. */
-        if (error) { // Got an error!
-            console.error(error);
-        } else {
-            restaurantService.map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 16,
-                center: restaurant.latlng,
-                scrollwheel: false
-            });
-            restaurantService.fillBreadcrumb();
-            DBHelper.mapMarkerForRestaurant(restaurantService.restaurant, restaurantService.map);
-        }
-    });
-};
-
-function RestaurantService() {
-
+export function RestaurantService() {
+    
+    const self = this;
     this.restaurant;
     this.map;
-    initModal();
+    
+    document.addEventListener('DOMContentLoaded', (event) => {
+        GoogleMapsLoader.KEY = 'AIzaSyD7KC8kdJmtPQc1QOG9QFJP-I9Nd-i5eC0';
+        GoogleMapsLoader.LIBRARIES = ['places'];
+        GoogleMapsLoader.load(this.initMap);
+    });
+
+    /** Initialize Google map, not called from HTML any more, but when DOMContentLoaded. */
+    this.initMap = () => {
+        self.fetchRestaurantFromURL((error, restaurant) => {
+            if (error) { // Got an error!
+                console.error(error);
+            } else {
+                self.map = new google.maps.Map(document.getElementById('map'), {
+                    zoom: 16,
+                    center: restaurant.latlng,
+                    scrollwheel: false
+                });
+                self.fillBreadcrumb();
+                DBHelper.mapMarkerForRestaurant(self.restaurant, self.map);
+            }
+        });
+    };
 
     /** Get current restaurant from page URL. */
     this.fetchRestaurantFromURL = (callback) => {
@@ -82,6 +82,7 @@ function RestaurantService() {
         }
         // fill reviews
         fillReviewsHTML();
+        initNewReviewModal();
     };
 
     /** Create restaurant operating hours HTML table and add it to the webpage. */
@@ -171,9 +172,7 @@ function RestaurantService() {
         return decodeURIComponent(results[2].replace(/\+/g, ' '));
     };
 
-    const fillModalHTML = function (restaurant = self.restaurant) {
-        const modalContent = document.getElementById('review-modal');
-
+    const createModalHTML = function (restaurant = self.restaurant) {
         const content = document.createElement('div');
         content.id = 'modal-content';
         content.classList.add('modal-content');
@@ -202,7 +201,7 @@ function RestaurantService() {
                 <input type="hidden" id="restaurant_id" name="restaurant_id" value=${restaurant.id}>
                 <label for="name">Name:
                 </label>
-                <input id="name" name="reviewer_name" type="text">
+                <input id="name" name="name" type="text">
             </div>
             <div>
                 <label for="rating">Rating: </label>
@@ -222,38 +221,88 @@ function RestaurantService() {
                 <span id="star5" class="star star-empty">★</span>
             </div>
             <div>
-                <label for="review-textarea">Your comments:</label>
-                <textarea id="review-textarea" name="comments" cols="30" rows="10"></textarea>
+                <label for="review">Your comments:</label>
+                <textarea id="review" name="comments" cols="30" rows="10"></textarea>
             </div>`;
         body.appendChild(form);
         content.appendChild(body);
 
         const footer = document.createElement('footer');
         footer.classList.add('modal-footer');
-        footer.innerHTML = `<button class="btn btn-warning" form="new-review-form" type="submit">Save</button>
+
+        footer.innerHTML = `<button id="submit-btn" class="btn btn-warning" form="new-review-form" type="submit">Save</button>
         <button id="cancel" class="btn btn-default">Cancel</button>`;
         content.appendChild(footer);
         
-        modalContent.appendChild(content);
+        return content;
+    };
+    
+    const fillNewReviewHTML = function(review) {
+        const ul = document.getElementById('reviews-list');
+        ul.insertAdjacentElement('afterbegin', createReviewHTML(review));
     };
 
-
     /* Based on https://www.w3schools.com/howto/howto_css_modals.asp */
-    function initModal() {
+    const initNewReviewModal = function () {
         // Get the modal
         const modal = document.getElementById('review-modal');
+        const content = createModalHTML();
+        modal.appendChild(content);
 
-        // When the user clicks anywhere outside of the modal, on the x, or cancel button, close it
+        // When the user clicks anywhere outside of the modal content, on the x, or cancel button, close it
         window.addEventListener('click', function(event) {
             if (event.target === modal || event.target.id === 'cancel' || event.target.id === 'close') {
-                modal.classList.add('isHidden');
-                modal.innerHTML = '';
+                //modal.classList.add('isHidden');
+                toggleElement(modal);
+                document.forms['new-review-form'].reset();
             } else if(event.target.id === 'open-modal'){
-                modal.classList.remove('isHidden');
-                fillModalHTML();
+                //modal.classList.remove('isHidden');
+                toggleElement(modal);
             }
         });
-    }
+
+        // document.getElementById('submit-btn').addEventListener('click', (event) => {
+        //     // process post here??        
+        //     console.log('submit clicked, how to get the data?', event);
+        //     //DBHelper.
+        // });
+
+        document.forms['new-review-form'].onsubmit = function (event) {
+            event.preventDefault();
+            submitReview(event.target);
+        };
+    };
+
+    const toggleElement = function(el) {
+        el.classList.contains('isHidden') ? el.classList.remove('isHidden') : el.classList.add('isHidden');
+    };
+    
+    const submitReview = function (form){
+
+        // FormData works only with strings
+        // maybe use a json format??
+        //let form = new FormData(data);
+        // let rating = parseInt(form.get('rating'));
+        // form.set('rating', rating);
+
+        // TODO VALIDATE VALUES!
+
+        let review = {};
+        review[form.restaurant_id.name] = parseInt(form.restaurant_id.value);
+        review[form.name.name] = form.name.value;
+        review[form.rating.name] = parseInt(form.rating.value);
+        review[form.review.name] = form.review.value;
+
+        DBHelper.saveNewReview(review)
+            .then(result => {
+                console.log(result);
+                // Display the newly saved review
+                fillNewReviewHTML(result);
+                // Close and reset the modal
+                toggleElement(document.getElementById('review-modal'));
+                document.forms['new-review-form'].reset();
+            });
+
+    };
 }
 
-var restaurantService = new RestaurantService();
