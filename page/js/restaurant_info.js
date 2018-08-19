@@ -8,11 +8,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
     GoogleMapsLoader.load(initMap);
 });
 
-/**
- * Initialize Google map, called from HTML.
- */
 const initMap = () => {
     restaurantService.fetchRestaurantFromURL((error, restaurant) => {
+    /** Initialize Google map, not called from HTML any more, but when DOMContentLoaded. */
         if (error) { // Got an error!
             console.error(error);
         } else {
@@ -33,11 +31,7 @@ function RestaurantService() {
     this.map;
     initModal();
 
-    /**
-     * Get current restaurant from page URL.
-     */
-    const self = this;
-
+    /** Get current restaurant from page URL. */
     this.fetchRestaurantFromURL = (callback) => {
         if (self.restaurant) { // restaurant already fetched!
             callback(null, self.restaurant);
@@ -60,9 +54,7 @@ function RestaurantService() {
         }
     };
 
-    /**
-     * Create restaurant HTML and add it to the webpage
-     */
+    /** Create restaurant HTML and add it to the webpage */
     const fillRestaurantHTML = (restaurant = this.restaurant) => {
         const name = document.getElementById('restaurant-name');
         name.innerHTML = restaurant.name;
@@ -92,9 +84,7 @@ function RestaurantService() {
         fillReviewsHTML();
     };
 
-    /**
-     * Create restaurant operating hours HTML table and add it to the webpage.
-     */
+    /** Create restaurant operating hours HTML table and add it to the webpage. */
     const fillRestaurantHoursHTML = (operatingHours = this.restaurant.operating_hours) => {
         const hours = document.getElementById('restaurant-hours');
         // TODO: Test if screen reader reads the contents of the restaurant hours
@@ -114,9 +104,7 @@ function RestaurantService() {
         }
     };
 
-    /**
-     * Create all reviews HTML and add them to the webpage.
-     */
+    /** Create all reviews HTML and add them to the webpage. */
     const fillReviewsHTML = (reviews = this.restaurant.reviews) => {
         const container = document.getElementById('reviews-container');
         const title = document.createElement('h3');
@@ -136,9 +124,7 @@ function RestaurantService() {
         container.appendChild(ul);
     };
 
-    /**
-     * Create review HTML and add it to the webpage.
-     */
+    /** Create review HTML and add it to the webpage. */
     const createReviewHTML = (review) => {
         const li = document.createElement('li');
         const name = document.createElement('p');
@@ -162,9 +148,7 @@ function RestaurantService() {
         return li;
     };
 
-    /**
-     * Add restaurant name to the breadcrumb navigation menu
-     */
+    /** Add restaurant name to the breadcrumb navigation menu */
     this.fillBreadcrumb = (restaurant = this.restaurant) => {
         const breadcrumb = document.getElementById('breadcrumb');
         const li = document.createElement('li');
@@ -173,9 +157,7 @@ function RestaurantService() {
         breadcrumb.appendChild(li);
     };
 
-    /**
-     * Get a parameter by name from page URL.
-     */
+    /** Get a parameter by name from page URL. */
     const getParameterByName = (name, url) => {
         if (!url)
             url = window.location.href;

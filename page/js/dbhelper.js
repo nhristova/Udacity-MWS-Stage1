@@ -10,18 +10,14 @@ let savingRestaurants = false;
 /* globals google */
 export class DBHelper {
 
-    /**
-     * Database URL.
-     * Change this to restaurants.json file location on your server.
-     */
+    /** Database URL.
+     * Change this to restaurants.json file location on your server.*/
     static get DATABASE_URL() {
         const port = 1337; // Change this to your server port
         return `http://localhost:${port}/`;
     }
 
-    /**
-     * Fetch all restaurants.
-     */
+    /** Fetch all restaurants. */
     static getRestaurants(callback) {
         // if there are restaurants in IDB, show them
 
@@ -68,9 +64,7 @@ export class DBHelper {
             });
     }
 
-    /**
-     * Fetch a restaurant by its ID.
-     */
+    /** Fetch a restaurant by its ID.*/
     static fetchRestaurantById(id, callback) {
         // fetch all restaurants with proper error handling.
         DBHelper.getRestaurants((error, restaurants) => {
@@ -95,10 +89,12 @@ export class DBHelper {
         });
     }
 
+    /** Fetch a review by its ID.*/
     static getReviewsById(restaurantId) {
         return DBHelper.loadIdbStore('reviews')
             .then(reviewsIdb => {
-                // TODO: check what this receives
+                // TODO: add out-box entries here
+                // consider when no idb, only out-box entries
                 if(reviewsIdb.length > 0){
                     return Promise.resolve(reviewsIdb);
                 }
@@ -109,9 +105,7 @@ export class DBHelper {
             .catch(error => console.log('Error getting reviews', error));
     }
 
-    /**
-     * Fetch restaurants by a cuisine type with proper error handling.
-     */
+    /** Fetch restaurants by a cuisine type with proper error handling. */
     static fetchRestaurantByCuisine(cuisine, callback) {
         // Fetch all restaurants  with proper error handling
         DBHelper.getRestaurants((error, restaurants) => {
@@ -125,9 +119,7 @@ export class DBHelper {
         });
     }
 
-    /**
-     * Fetch restaurants by a neighborhood with proper error handling.
-     */
+    /** Fetch restaurants by a neighborhood with proper error handling. */
     static fetchRestaurantByNeighborhood(neighborhood, callback) {
         // Fetch all restaurants
         DBHelper.getRestaurants((error, restaurants) => {
@@ -141,9 +133,7 @@ export class DBHelper {
         });
     }
 
-    /**
-     * Fetch restaurants by a cuisine and a neighborhood with proper error handling.
-     */
+    /** Fetch restaurants by a cuisine and a neighborhood with proper error handling. */
     static fetchRestaurantByCuisineAndNeighborhood(cuisine, neighborhood, callback) {
         // Fetch all restaurants
         DBHelper.getRestaurants((error, restaurants) => {
@@ -162,9 +152,7 @@ export class DBHelper {
         });
     }
 
-    /**
-     * Fetch all neighborhoods with proper error handling.
-     */
+    /** Fetch all neighborhoods with proper error handling. */
     static fetchNeighborhoods(callback) {
         // Fetch all restaurants
         DBHelper.getRestaurants((error, restaurants) => {
@@ -180,9 +168,7 @@ export class DBHelper {
         });
     }
 
-    /**
-     * Fetch all cuisines with proper error handling.
-     */
+    /** Fetch all cuisines with proper error handling. */
     static fetchCuisines(callback) {
         // Fetch all restaurants
         DBHelper.getRestaurants((error, restaurants) => {
@@ -198,23 +184,17 @@ export class DBHelper {
         });
     }
 
-    /**
-     * Restaurant page URL.
-     */
+    /** Restaurant page URL. */
     static urlForRestaurant(restaurant) {
         return (`./restaurant.html?id=${restaurant.id}`);
     }
 
-    /**
-     * Restaurant image URL.
-     */
+    /** Restaurant image URL. */
     static imageUrlForRestaurant(restaurant) {
         return (`/img/${restaurant.id}.jpg`);
     }
 
-    /**
-     * Map marker for a restaurant.
-     */
+    /** Map marker for a restaurant. */
     static mapMarkerForRestaurant(restaurant, map) {
         const marker = new google.maps.Marker({
             position: restaurant.latlng,
