@@ -1,6 +1,7 @@
-import { DBHelper } from './dbhelper.js';
+// import { DBHelper } from './dbhelper.js';
+import { MainController } from './controller.js';
 
-/* globals GoogleMapsLoader, google */
+/* globals GoogleMapsLoader, google, DBHelper */
 
 export function RestaurantService() {
     
@@ -13,6 +14,10 @@ export function RestaurantService() {
         GoogleMapsLoader.LIBRARIES = ['places'];
         GoogleMapsLoader.load(this.initMap);
     });
+
+    window.onload = () => {
+        new MainController();
+    };
 
     /** Initialize Google map, not called from HTML any more, but when DOMContentLoaded. */
     this.initMap = () => {

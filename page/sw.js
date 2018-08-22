@@ -1,3 +1,10 @@
+//import { DBHelper } from './js/dbhelper.js';
+// self.importScripts() TODO: Check if this works?? 
+importScripts('./js/idb.js');
+importScripts('./js/dbhelper.js');
+
+/* globals DBHelper */
+
 const staticCacheName = 'restaurant-static-v5';
 const imgsCacheName = 'restaurant-imgs';
 const allCaches = [staticCacheName, imgsCacheName];

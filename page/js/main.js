@@ -1,7 +1,7 @@
-import { DBHelper } from './dbhelper.js';
+// import { DBHelper } from './dbhelper.js';
 import { MainController } from './controller.js';
 
-/* globals GoogleMapsLoader, google */
+/* globals GoogleMapsLoader, google, DBHelper */
 
 let restaurants,
     neighborhoods,

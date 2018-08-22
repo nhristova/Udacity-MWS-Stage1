@@ -15,7 +15,8 @@ export function MainController() {
 MainController.prototype.registerServiceWorker = function() {
     // Check support for serviceWorker
     // skip SW functions if no support
-    if (!navigator.serviceWorker) { return; }
+    // TODO: Check what happens on browsers without SW or SM
+    if (!navigator.serviceWorker || !window.SyncManager) { return; }
     toasty.showMessage('Starting SW registration', toasty.type.warning);
     
     const mainController = this;
@@ -61,6 +62,21 @@ MainController.prototype.registerServiceWorker = function() {
             };
         })
         .catch((err) => console.log('Error registering serviceWorker', err));
+
+    // Jake Archibald https://developers.google.com/web/updates/2015/12/background-sync
+    // Background synchronization explained https://github.com/WICG/BackgroundSync/blob/master/explainer.md
+    navigator.serviceWorker.ready.then(reg => {
+
+        window.addEventListener('online', () => {
+            reg.sync.register('sync-reviews-on-online')
+                .then(() => console.log('Controller registered sync-reviews-on-online'))
+                .catch((error) => console.log('Controller failed to register sync-reviews-on-online, error: ', error));
+        });
+
+        return reg.sync.register('sync-reviews-on-reload')
+            .then(() => console.log('Controller registered sync-reviews-on-reload'))
+            .catch((error) => console.log('Controller failed to register sync-reviews-on-reload, error: ', error));
+    });
 
     // Ensure refresh is only called once.
     // This works around a bug in "force update on reload".

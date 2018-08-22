@@ -1,5 +1,3 @@
-import { idb } from './idb.js';
-
 /**
  * Common database helper functions.
  */
@@ -7,8 +5,7 @@ let lastUpdate = new Date(2000, 1, 1);
 let savingRestaurants = false;
 
 
-/* globals google */
-export class DBHelper {
+class DBHelper {
 
     /** Database URL.
      * Change this to restaurants.json file location on your server.*/
@@ -122,12 +119,16 @@ export class DBHelper {
         }
 
         // if offline, save to outbox
-        // !navigator.online && DBHelper.saveIdbStore('outbox', review)
-        //     .then(result => {
-        //         console.log(`Review saved to outbox ${result}`);
-        //         return result;
-        //     })
-        //     .catch(error => console.log('Error saving review to outbox', error));
+        // TODO remove if statement
+        if (!navigator.onLine) {
+            return DBHelper.saveIdbStore('outbox', draftReview)
+                .then(result => {
+                    // TODO: Check if saveIdbStore can return some value
+                    console.log('DBHelper saveNewReview: offline review saved to outbox', draftReview);
+                    return draftReview;
+                })
+                .catch(error => console.log('Error saving review to outbox', error));
+        }
     }
 
     static saveToNetwork(path, review){
@@ -260,7 +261,7 @@ export class DBHelper {
         // upgradeDb callback only called if `version` is greater 
         // than the version last opened or 
         // when the browser has not heard of this database before
-        return idb.open('mws-stage2', 1, (upgradeDb) => {
+        return idb.open('mws-stage2', 2, (upgradeDb) => {
             console.log('openDatabase upgradeDb called', upgradeDb);
             // Trying to create a store twice will throw an error
             // make sure the version is updated 
@@ -269,6 +270,8 @@ export class DBHelper {
             case 0:
                 upgradeDb.createObjectStore('restaurants', { keyPath: 'id' });
                 upgradeDb.createObjectStore('reviews', { keyPath: 'id' });
+                case 1:
+                    upgradeDb.createObjectStore('outbox', { keyPath: 'tempId', autoIncrement: true });
             }
         });
     }
@@ -303,6 +306,45 @@ export class DBHelper {
             }).then(() => {
                 savingRestaurants = false;
                 console.log(`Data saved to IDB, store ${storeName}`);
+            });
+    }
+
+    static clearIdbStore(storeName) {
+        return DBHelper.openDatabase()
+            .then(db => {
+                const tx = db.transaction(storeName, 'readwrite');
+                tx.objectStore(storeName).clear();
+                
+                return tx.complete;
+            })
+            .then(result => console.log('DBHelper clearIdbStore: done'));
+    }
+
+    static processOutbox() {
+        // get from IndexedDB outbox
+        // return promise?        
+        console.log('DBHelper processOutbox: starting');
+
+        if(!navigator.onLine) {
+            console.log('DBHelper processOutbox: No internet, rejecting');
+            return Promise.reject('DBHelper processOutbox: No internet, try again later');
+        }
+
+        return DBHelper.loadIdbStore('outbox')
+            .then(pendingReviews => {
+                // send to network
+                // map each pending item
+                // save in the reviews idb
+                // should wait here?
+                console.log('DBHelper processOutbox: mapping pending reviews');
+                pendingReviews.map(pReview => DBHelper.saveNewReview(pReview));
+            })
+            .then(() => {
+                console.log('DBHelper processOutbox: cleaning outbox');
+                // clean outbox
+                DBHelper.clearIdbStore('outbox');
+                // This doesn't seem to work
+                return Promise.resolve('DBHelper processOutbox: Outbox processed successfully');
             });
     }
 }
