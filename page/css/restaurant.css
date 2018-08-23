@@ -29,10 +29,10 @@ header {
 }
 
 #restaurant-name {
-    color: #f18200;
+    color: #2e8540;
     font-family: Roboto, Arial, sans-serif;
     font-size: 20pt;
-    font-weight: 200;
+    font-weight: 400;
     letter-spacing: 0;
     margin: 15px 0 30px;
     text-transform: uppercase;
@@ -67,11 +67,8 @@ header {
     border-bottom: 1px solid #d9d9d9;
     border-top: 1px solid #fff;
     padding: 30px;
-    width: 50%;
-}
-
-#restaurant-container {
     position: relative;
+    width: 50%;
 }
 
 #reviews-container {
@@ -79,7 +76,7 @@ header {
 }
 
 #reviews-container h3 {
-    color: #f58500;
+    color: #2e8540;
     font-size: 24pt;
     font-weight: 300;
     letter-spacing: -1px;
@@ -143,7 +140,7 @@ header {
 /* Styling of the rating label */
 
 #reviews-list li p:nth-of-type(3) {
-    background-color: #ffa500;
+    background-color: #2e8540;
     border-radius: 3px;
     color: #fff;
     padding: 5px 15px;
@@ -201,8 +198,16 @@ header {
 }
 
 #review-modal textarea {
+    border-radius: 3px;
     width: 100%;
     padding: 5px;
+}
+
+.modal-content input, 
+.modal-content select {
+    border: 1px solid #a9a9a9;
+    border-radius: 3px;
+    padding: 3px;
 }
 
 /* The Close Button */
@@ -222,3 +227,7 @@ header {
     cursor: pointer;
 }
 
+.btn-open-review {
+    position: absolute;
+    right: 30px;
+}

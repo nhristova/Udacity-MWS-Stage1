@@ -46,7 +46,7 @@ li {
 }
 
 a {
-    color: orange;
+    color: #fff;
     text-decoration: none;
 }
 
@@ -90,6 +90,7 @@ section {
 /* ====================== Skip link ====================== */
 
 .skip-link {
+    background-color: #0074D9;
     position: absolute;
     top: -40px;
 }
@@ -98,7 +99,7 @@ section {
     position: static;
     padding-top: 90px;
     top: 0;
-    background-color: #3397DB;
+    background-color: #0074D9;
     color: #fff;
     padding: 5px 10px;
     border-radius: 5px;
@@ -115,7 +116,7 @@ section {
 
 #footer {
     background-color: #444;
-    color: #aaa;
+    color: #eee;
     font-size: 8pt;
     letter-spacing: 1px;
     padding: 25px;
@@ -179,7 +180,7 @@ nav h2 a {
 /* Add a color to all links inside the list */
 
 .breadcrumb li a {
-    color: #0275d8;
+    color: #004aa3;
     text-decoration: none;
 }
 
@@ -187,7 +188,7 @@ nav h2 a {
 /* Add a color on mouse-over */
 
 .breadcrumb li a:hover {
-    color: #01447e;
+    color: #0074D9;
     text-decoration: underline;
 }
 
@@ -198,6 +199,7 @@ nav h2 a {
 .btn {
     display: inline-block;
     font-size: 0.8em;
+    font-family: Roboto, Arial, sans-serif;
     text-align: center;
     white-space: nowrap;
     vertical-align: middle;
@@ -217,8 +219,17 @@ nav h2 a {
     background-color: #999;
 }
 
+.btn-primary {
+    background-color: #fff;
+    color: #666;
+}
+
+.btn-primary:hover {
+    background-color: #eee;
+}
+
 .btn-warning {
-    background-color: #ffa500; /* orange */
+    background-color: #2e8540; /* orange */
     border-radius: 0 10px;
     color: #fff;
     text-transform: uppercase;
@@ -226,7 +237,7 @@ nav h2 a {
 
 .btn-warning:hover {
     /* filter: brightness(85%); */
-    background-color: #ffc107;
+    background-color: #4aa564;
 }
 
 /* ====================== Star styles  ====================== */
@@ -238,14 +249,19 @@ nav h2 a {
     color: #888;
 }
 
-.star-checked {
-    color: orange;
-}
-
 .star-fav {
     position: absolute;
     left: 20px;
     font-size: 2em;
+    color: #fff;
+}
+
+.star-checked {
+    color: #fdb81e;
+}
+
+.star-fav:hover {
+    filter: brightness(110%);
 }
 
 #restaurant-container .star-fav {

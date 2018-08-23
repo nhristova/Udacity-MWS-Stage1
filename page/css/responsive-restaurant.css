@@ -1,6 +1,6 @@
 body {}
 
-@media screen and (max-width: 480px) {
+@media screen and (max-width: 720px) {
     nav h2 a {
         font-size: 0.8em;
         letter-spacing: 8px;
@@ -13,28 +13,28 @@ body {}
     }
     #map-container {
         width: 100vw;
-        height: 100vw;
+        max-height: 20vh;
     }
 }
 
 @media screen and (min-width: 481px) and (max-width: 720px) {
     #restaurant-container {
-        width: 50vw;
-        order: 1;
+        /* width: 50vw; */
+        /* order: 1; */
     }
     #map-container {
-        width: 50vw;
-        height: 75vh;
-        order: 2;
+        /* width: 50vw; */
+        max-height: 30vh;
+        /* order: 2; */
     }
     #reviews-container {
-        order: 3;
+        /* order: 3; */
     }
     #reviews-list li {
-        width: calc(50% - 10px);
+        /* width: calc(50% - 10px); */
     }
     #reviews-list li:nth-child(odd) {
-        margin-right: 10px;
+        /* margin-right: 10px; */
     }
 
     .modal-content {
@@ -86,6 +86,10 @@ body {}
 
     .modal-content {
         max-width: 400px;
+    }
+
+    .star-fav {
+        left: 40px;
     }
 }
 
