@@ -228,3 +228,26 @@ nav h2 a {
     /* filter: brightness(85%); */
     background-color: #ffc107;
 }
+
+/* ====================== Star styles  ====================== */
+
+
+.star {
+    font-size: 2em;
+    cursor: pointer;
+    color: #888;
+}
+
+.star-checked {
+    color: orange;
+}
+
+.star-fav {
+    position: absolute;
+    left: 20px;
+    font-size: 2em;
+}
+
+#restaurant-container .star-fav {
+    left: 30px;
+}

@@ -70,6 +70,10 @@ header {
     width: 50%;
 }
 
+#restaurant-container {
+    position: relative;
+}
+
 #reviews-container {
     padding: 30px 30px 60px;
 }
@@ -218,16 +222,3 @@ header {
     cursor: pointer;
 }
 
-
-.star {
-    font-size: 30px;
-    cursor: context-menu;
-}
-
-.star-empty {    
-    color: #888;
-}
-
-.star-checked {
-    color: orange;
-}

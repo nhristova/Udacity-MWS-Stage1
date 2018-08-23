@@ -76,6 +76,7 @@ header,
     margin: 10px;
     /* min-height: 380px; */
     padding: 0 30px 25px;
+    position: relative;
     /* text-align: left; */
     max-width: 100vw;
 }

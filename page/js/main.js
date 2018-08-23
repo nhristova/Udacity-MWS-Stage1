@@ -1,5 +1,6 @@
 // import { DBHelper } from './dbhelper.js';
 import { MainController } from './controller.js';
+import { shared } from './shared.js';
 
 /* globals GoogleMapsLoader, google, DBHelper */
 
@@ -22,9 +23,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
     GoogleMapsLoader.load(initMap);
 });
 
-
 window.onload = () => {
     addMarkersToMap();
+    shared.initStarFav(document.getElementById('restaurants-list'));
+
 };
 
 /**
@@ -159,6 +161,20 @@ const fillRestaurantsHTML = (restaurants = self.restaurants) => {
 const createRestaurantHTML = (restaurant) => {
     const li = document.createElement('li');
     const imgSrc = DBHelper.imageUrlForRestaurant(restaurant);
+
+    const star = document.createElement('span');
+    star.id = 'star-fav-' + restaurant.id;
+    star.classList.add('star', 'star-fav');
+    star.setAttribute('role', 'checkbox');
+    star.setAttribute('title', 'Mark restaurant as favourite');
+    star.setAttribute('tabindex', 0);
+    star.innerHTML = '★';
+    const isFav = restaurant.is_favorite;
+    if(isFav){
+        star.setAttribute('checked', isFav);
+        star.classList.add('star-checked');
+    }    
+    li.append(star);
 
     const image = document.createElement('img');
     image.className = 'restaurant-img';

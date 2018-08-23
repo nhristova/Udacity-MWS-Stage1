@@ -1,5 +1,6 @@
 // import { DBHelper } from './dbhelper.js';
 import { MainController } from './controller.js';
+import { shared } from './shared.js';
 
 /* globals GoogleMapsLoader, google, DBHelper */
 
@@ -67,6 +68,13 @@ export function RestaurantService() {
         const address = document.getElementById('restaurant-address');
         address.innerHTML = restaurant.address;
         address.setAttribute('aria-label', 'Address: ' + restaurant.address + '.');
+
+        const starRef = document.getElementById('star-fav');
+        starRef.id += '-' + restaurant.id;
+        if(restaurant.is_favorite) {
+            starRef.setAttribute('checked', true);
+            starRef.classList.add('star-checked');
+        }
 
         const imgSrc = DBHelper.imageUrlForRestaurant(restaurant);
 
