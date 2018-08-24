@@ -1,4 +1,4 @@
-/* globals google */
+/* globals google, idb */
 
 /**
  * Common database helper functions.
@@ -40,10 +40,10 @@ class DBHelper {
     static getOneRestaurant(id) {
         return DBHelper.loadIdbStore('restaurants', id)
             .then(restaurant => {
-                if(restaurant) {
+                if (restaurant) {
                     return Promise.resolve(restaurant);
                 }
-                return DBHelper.fetchFromNetwork('restaurants', `/restaurants/${id}`);
+                return DBHelper.fetchFromNetwork('restaurants', `/${id}`);
             })
             .then(result => console.log(result))
             .catch(error => console.log('Error getting one restaurant', error));
@@ -58,7 +58,7 @@ class DBHelper {
                 DBHelper.saveIdbStore(path, data);
                 return data;
             })
-            .catch(error => console.log('Error fetching reviews from network', error));
+            .catch(error => console.log('DBHelper Error fetching from network', path, query, error));
     }
 
     /** Fetch a restaurant by its ID.*/
@@ -69,7 +69,7 @@ class DBHelper {
                 callback(error, null);
             } else {
                 const restaurant = restaurants.find(r => r.id == id);
-                if (restaurant && !restaurant.reviews) { 
+                if (restaurant && !restaurant.reviews) {
                     // Get reviews
                     DBHelper.getReviewsById(restaurant.id)
                         .then(result => {
@@ -86,7 +86,7 @@ class DBHelper {
     /** Fetch a review by its ID - load from idb quickly; if offline, add pending entries;
      * if no idb data, load from network. Finally, filter the reviews per restaurant because
      * the idb stores return all entries (fetching returns only for provided restaurant id).
-    */
+     */
     static getReviewsById(restaurantId) {
         return DBHelper.loadIdbStore('reviews')
             .then(reviewsIdb => {
@@ -95,11 +95,11 @@ class DBHelper {
                     DBHelper.fetchFromNetwork('reviews', `/?restaurant_id=${restaurantId}`);
                     return reviewsIdb;
                 }
-                    // Add pending outbox entries
+                // Add pending outbox entries
                 if (!navigator.onLine) {
-                        return DBHelper.loadIdbStore('outbox')
-                            .then(pending => reviewsIdb.concat(pending));
-                    }
+                    return DBHelper.loadIdbStore('outbox')
+                        .then(pending => reviewsIdb.concat(pending));
+                }
                 //return Promise.resolve(reviewsIdb);
                 // No reviews in idb or outbox, get from network
                 return DBHelper.fetchFromNetwork('reviews', `/?restaurant_id=${restaurantId}`);
@@ -127,7 +127,7 @@ class DBHelper {
         return DBHelper.saveIdbStore('outbox', draftReview)
             .then(result => {
                 // TODO: Check if saveIdbStore can return some value
-                console.log('DBHelper saveNewReview: offline review saved to outbox', draftReview);
+                console.log('DBHelper saveNewReview: offline review saved to outbox', result, draftReview);
                 return draftReview;
             })
             .catch(error => console.log('Error saving review to outbox', error));
@@ -141,12 +141,9 @@ class DBHelper {
             headers: {
                 'Content-Type': 'application/json'
             },
-            // TODO:  PUT requests should be without body, otherwise server throws a parsing error
+            // PUT requests for favourites should be without body, otherwise server throws a parsing error
             body: JSON.stringify(data)
         };
-
-        // https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch#Supplying_request_options
-        //'Content-Type', 'application/x-www-form-urlencoded'
 
         return fetch(url, init)
             .then(response => response.json())
@@ -156,17 +153,6 @@ class DBHelper {
             })
             .catch(error => console.error('Error saving reviews', error));
     }
-    
-    // static putToNetwork(path, data = '') {
-    //     const url = DBHelper.DATABASE_URL + path;
-    //     const init = {
-    //         method: 'PUT',
-    //         headers: {
-    //             'Content-Type': 'applicaiton/json'
-    //         },
-    //         body: JSON.stringify(data)
-    //     };
-    // }
 
     /** Add or remove favourite */
     static toggleFavourite(rId, isFav) {
@@ -313,7 +299,6 @@ class DBHelper {
 
     /** Retrieves all items or one item if id/key is passed */
     static loadIdbStore(storeName, itemId) {
-        // check if it's ok to call openDatabase twice
         return DBHelper.openDatabase()
             .then(db => {
                 if (!db) return;
@@ -321,7 +306,7 @@ class DBHelper {
                 const tx = db.transaction(storeName);
                 const store = tx.objectStore(storeName);
 
-                if(itemId) {
+                if (itemId) {
                     return store.get(itemId);
                 }
 
@@ -356,7 +341,7 @@ class DBHelper {
             .then(db => {
                 const tx = db.transaction(storeName, 'readwrite');
                 tx.objectStore(storeName).clear();
-                
+
                 // returns nothing?
                 return tx.complete;
             })
@@ -369,11 +354,11 @@ class DBHelper {
      * and finally empties the outbox. */
     static processOutbox() {
         // console.log('DBHelper processOutbox: starting');
-        if(!navigator.onLine) {
+        if (!navigator.onLine) {
             console.log('DBHelper processOutbox: No internet, rejecting');
             return Promise.reject('DBHelper processOutbox: No internet, try again later');
         }
-        
+
         return DBHelper.loadIdbStore('outbox')
             .then(pendingReviews => {
                 // console.log('DBHelper processOutbox: mapping pending reviews');

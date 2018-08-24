@@ -14,13 +14,13 @@ WorkerRegister.prototype.registerServiceWorker = function() {
     // skip SW functions if no support
     // TODO: Check what happens on browsers without SW or SM
     if (!navigator.serviceWorker || !window.SyncManager) { return; }
-    toasty.showMessage('Starting SW registration', toasty.type.warning);
+    // toasty.showMessage('Starting SW registration', toasty.type.warning);
     
     const mainController = this;
 
     navigator.serviceWorker.register('/sw.js')
         .then(function(reg) {
-            console.log('SW registered');
+            toasty.showMessage('SW registered', toasty.type.success);
 
             // If there is no controller, this page was NOT loaded via a SW
             // so this is the latest version, exit
@@ -90,7 +90,7 @@ WorkerRegister.prototype.trackInstalling = function(worker) {
     const mainController = this;
 
     console.log('Track installing');
-    worker.addEventListener('statechange', function(event) {
+    worker.addEventListener('statechange', function() {
         console.log('State change: ', worker.state);
 
         if (worker.state == 'installed') {

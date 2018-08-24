@@ -9,7 +9,7 @@ header,
 /* ====================== Map ====================== */
 
 #map {
-    height: 400px;
+    min-height: 20vh;
     width: 100%;
     background-color: #ccc;
 }
@@ -37,7 +37,7 @@ header,
     background-color: #fff;
     border: 1px solid #fff;
     border-radius: 5px;
-    display: block;
+    /* display: block; */
     font-family: Arial, sans-serif;
     font-size: 11pt;
     height: 35px;

@@ -5,7 +5,7 @@ importScripts('./js/dbhelper.js');
 
 /* globals DBHelper */
 
-const staticCacheName = 'restaurant-static-v2';
+const staticCacheName = 'restaurant-static-v5';
 const imgsCacheName = 'restaurant-imgs';
 const allCaches = [staticCacheName, imgsCacheName];
 
@@ -75,7 +75,7 @@ self.addEventListener('fetch', (event) => {
                 return response;
             })
             .catch((error) => {
-                console.log('ERROR: ', error);
+                console.log('SW ERROR: ', error);
                 return new Response('Connection error');
             })
     );
@@ -110,7 +110,8 @@ self.addEventListener('sync', (event) => {
         // console.log('SW SYNC Triggering sync on connection restore');
         event.waitUntil(
             DBHelper.processOutbox()
-                .then(result => console.log('SW SYNC processOutbox on-online completed, result: ', result))
+                .then(result => console.log('SW SYNC processOutbox on online completed, result: ', result))
+                .catch(error => console.log('SW SYNC online error: ', error))
         );
     }
 
@@ -119,6 +120,7 @@ self.addEventListener('sync', (event) => {
         event.waitUntil(
             DBHelper.processOutbox()
                 .then(result => console.log('SW SYNC processOutbox on-reload completed, result: ', result))
+                .catch(error => console.log('SW SYNC reload error: ', error))
         );
     }
 });
