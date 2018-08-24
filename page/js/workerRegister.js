@@ -1,18 +1,15 @@
-import { ToastrService } from './toasty.js';
+import { toasty } from './toasty.js';
 
-const toasty = new ToastrService();
+export function WorkerRegister() {
 
-export function MainController() {
-
-    if (!navigator.onLine) {
-        toasty.showMessage('No internet connection, loading from cache.', toasty.type.error);
-    }
+    window.onoffline = () => toasty.showMessage('No internet connection 💔, loading from cache.', toasty.type.error);
+    window.ononline = () => toasty.showMessage('Internet is back! ❤', toasty.type.success);
 
     // this.dbPromise = openDatabase();
     this.registerServiceWorker();
 }
 
-MainController.prototype.registerServiceWorker = function() {
+WorkerRegister.prototype.registerServiceWorker = function() {
     // Check support for serviceWorker
     // skip SW functions if no support
     // TODO: Check what happens on browsers without SW or SM
@@ -63,18 +60,19 @@ MainController.prototype.registerServiceWorker = function() {
         })
         .catch((err) => console.log('Error registering serviceWorker', err));
 
+    // Register backgroundSync on online and reload
     // Jake Archibald https://developers.google.com/web/updates/2015/12/background-sync
     // Background synchronization explained https://github.com/WICG/BackgroundSync/blob/master/explainer.md
     navigator.serviceWorker.ready.then(reg => {
 
         window.addEventListener('online', () => {
             reg.sync.register('sync-reviews-on-online')
-                .then(() => console.log('Controller registered sync-reviews-on-online'))
+                // .then(() => console.log('Controller registered sync-reviews-on-online'))
                 .catch((error) => console.log('Controller failed to register sync-reviews-on-online, error: ', error));
         });
 
         return reg.sync.register('sync-reviews-on-reload')
-            .then(() => console.log('Controller registered sync-reviews-on-reload'))
+            // .then(() => console.log('Controller registered sync-reviews-on-reload'))
             .catch((error) => console.log('Controller failed to register sync-reviews-on-reload, error: ', error));
     });
 
@@ -88,7 +86,7 @@ MainController.prototype.registerServiceWorker = function() {
     });
 };
 
-MainController.prototype.trackInstalling = function(worker) {
+WorkerRegister.prototype.trackInstalling = function(worker) {
     const mainController = this;
 
     console.log('Track installing');
@@ -101,7 +99,7 @@ MainController.prototype.trackInstalling = function(worker) {
     });
 };
 
-MainController.prototype.updateReady = function(worker) {
+WorkerRegister.prototype.updateReady = function(worker) {
     const thisWorker = worker;
 
     const updateClick = function(event) {
@@ -114,5 +112,5 @@ MainController.prototype.updateReady = function(worker) {
         event.target.closest('.toast').remove();
     };
 
-    toasty.showMessage('New SW version ready,  update?<br /><button type="button" class="btn btn-default" data-action="update" id="okBtn">Yes</button> <button type="button" class="btn btn-default" data-action="noupdate" id="noBtn">No</button>', toasty.type.info, {onclick: updateClick});
+    toasty.showMessage('New SW version ready,  update?<br /><button type="button" class="btn btn-primary" data-action="update" id="okBtn">Yes</button> <button type="button" class="btn btn-primary" data-action="noupdate" id="noBtn">No</button>', toasty.type.info, {onclick: updateClick});
 };

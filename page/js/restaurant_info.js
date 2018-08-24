@@ -1,46 +1,53 @@
 // import { DBHelper } from './dbhelper.js';
-import { MainController } from './controller.js';
+import { WorkerRegister } from './workerRegister.js';
 import { shared } from './shared.js';
 
 /* globals GoogleMapsLoader, google, DBHelper */
 
 export function RestaurantService() {
-    
+
     const self = this;
     this.restaurant;
     this.map;
-    
-    document.addEventListener('DOMContentLoaded', (event) => {
-        GoogleMapsLoader.KEY = 'AIzaSyD7KC8kdJmtPQc1QOG9QFJP-I9Nd-i5eC0';
-        GoogleMapsLoader.LIBRARIES = ['places'];
-        GoogleMapsLoader.load(this.initMap);
-    });
 
     window.onload = () => {
-        new MainController();
-    };
 
-    /** Initialize Google map, not called from HTML any more, but when DOMContentLoaded. */
-    this.initMap = () => {
+        // TODO Consider replacing callbacks with promises
         self.fetchRestaurantFromURL((error, restaurant) => {
             if (error) { // Got an error!
                 console.error(error);
             } else {
-                self.map = new google.maps.Map(document.getElementById('map'), {
-                    zoom: 16,
-                    center: restaurant.latlng,
-                    scrollwheel: false
-                });
-                self.fillBreadcrumb();
-                DBHelper.mapMarkerForRestaurant(self.restaurant, self.map);
+                fillBreadcrumb();
+                fillRestaurantHTML();
+                initNewReviewModal();
+                
+                shared.initStarFav(document.getElementById('star-fav-' + self.restaurant.id));
+                
+                GoogleMapsLoader.KEY = 'AIzaSyD7KC8kdJmtPQc1QOG9QFJP-I9Nd-i5eC0';
+                GoogleMapsLoader.LIBRARIES = ['places'];
+                GoogleMapsLoader.load(this.initMap);
+
+                new WorkerRegister();
             }
         });
+    };
+
+    /** Initialize Google map, not called from HTML any more, but when DOMContentLoaded. */
+    this.initMap = () => {
+        self.map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 16,
+            center: self.restaurant.latlng,
+            scrollwheel: false
+        });
+
+        DBHelper.mapMarkerForRestaurant(self.restaurant, self.map);
     };
 
     /** Get current restaurant from page URL. */
     this.fetchRestaurantFromURL = (callback) => {
         if (self.restaurant) { // restaurant already fetched!
             callback(null, self.restaurant);
+            // TODO Update reviews
             return;
         }
         const id = getParameterByName('id');
@@ -49,12 +56,11 @@ export function RestaurantService() {
             callback(error, null);
         } else {
             DBHelper.fetchRestaurantById(id, (error, restaurant) => {
-                self.restaurant = restaurant;
                 if (!restaurant) {
                     console.error(error);
                     return;
                 }
-                fillRestaurantHTML();
+                self.restaurant = restaurant;
                 callback(null, restaurant);
             });
         }
@@ -95,7 +101,6 @@ export function RestaurantService() {
         }
         // fill reviews
         fillReviewsHTML();
-        initNewReviewModal();
     };
 
     /** Create restaurant operating hours HTML table and add it to the webpage. */
@@ -148,7 +153,7 @@ export function RestaurantService() {
         const date = document.createElement('p');
         const dateValue = new Date(review.createdAt);
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
-        date.innerHTML = dateValue.toLocaleDateString('en-US', options); 
+        date.innerHTML = dateValue.toLocaleDateString('en-US', options);
         li.appendChild(date);
 
         const rating = document.createElement('p');
@@ -163,7 +168,7 @@ export function RestaurantService() {
     };
 
     /** Add restaurant name to the breadcrumb navigation menu */
-    this.fillBreadcrumb = (restaurant = this.restaurant) => {
+    const fillBreadcrumb = (restaurant = this.restaurant) => {
         const breadcrumb = document.getElementById('breadcrumb');
         const li = document.createElement('li');
         li.setAttribute('aria-current', 'page');
@@ -185,7 +190,7 @@ export function RestaurantService() {
         return decodeURIComponent(results[2].replace(/\+/g, ' '));
     };
 
-    const createModalHTML = function (restaurant = self.restaurant) {
+    const createModalHTML = function(restaurant = self.restaurant) {
         const content = document.createElement('div');
         content.id = 'modal-content';
         content.classList.add('modal-content');
@@ -198,7 +203,7 @@ export function RestaurantService() {
         close.id = 'close';
         close.classList.add('close');
         header.appendChild(close);
-        
+
         const heading = document.createElement('h2');
         heading.innerHTML = `New review for ${restaurant.name}`;
         header.appendChild(heading);
@@ -208,7 +213,7 @@ export function RestaurantService() {
         body.classList.add('modal-body');
         const form = document.createElement('form');
         form.id = 'new-review-form';
-        form.action ='http://localhost:1337/reviews/';
+        form.action = 'http://localhost:1337/reviews/';
         form.method = 'POST';
         form.innerHTML = `<div>
                 <input type="hidden" id="restaurant_id" name="restaurant_id" value=${restaurant.id}>
@@ -246,17 +251,17 @@ export function RestaurantService() {
         footer.innerHTML = `<button id="submit-btn" class="btn btn-warning" form="new-review-form" type="submit">Save</button>
         <button id="cancel" class="btn btn-default">Cancel</button>`;
         content.appendChild(footer);
-        
+
         return content;
     };
-    
+
     const fillNewReviewHTML = function(review) {
         const ul = document.getElementById('reviews-list');
         ul.insertAdjacentElement('afterbegin', createReviewHTML(review));
     };
 
     /* Based on https://www.w3schools.com/howto/howto_css_modals.asp */
-    const initNewReviewModal = function () {
+    const initNewReviewModal = function() {
         // Get the modal
         const modal = document.getElementById('review-modal');
         const content = createModalHTML();
@@ -268,19 +273,13 @@ export function RestaurantService() {
                 //modal.classList.add('isHidden');
                 toggleElement(modal);
                 document.forms['new-review-form'].reset();
-            } else if(event.target.id === 'open-modal'){
+            } else if (event.target.id === 'open-modal') {
                 //modal.classList.remove('isHidden');
                 toggleElement(modal);
             }
         });
 
-        // document.getElementById('submit-btn').addEventListener('click', (event) => {
-        //     // process post here??        
-        //     console.log('submit clicked, how to get the data?', event);
-        //     //DBHelper.
-        // });
-
-        document.forms['new-review-form'].onsubmit = function (event) {
+        document.forms['new-review-form'].onsubmit = function(event) {
             event.preventDefault();
             submitReview(event.target);
         };
@@ -289,26 +288,21 @@ export function RestaurantService() {
     const toggleElement = function(el) {
         el.classList.contains('isHidden') ? el.classList.remove('isHidden') : el.classList.add('isHidden');
     };
-    
-    const submitReview = function (form){
 
-        // FormData works only with strings
-        // maybe use a json format??
-        //let form = new FormData(data);
-        // let rating = parseInt(form.get('rating'));
-        // form.set('rating', rating);
+    const submitReview = function(form) {
 
+        // Don't use FormData, works only with strings
         // TODO VALIDATE VALUES!
 
-        let review = {};
-        review[form.restaurant_id.name] = parseInt(form.restaurant_id.value);
-        review[form.name.name] = form.name.value;
-        review[form.rating.name] = parseInt(form.rating.value);
-        review[form.review.name] = form.review.value;
+        let draftReview = {};
+        draftReview[form.restaurant_id.name] = parseInt(form.restaurant_id.value);
+        draftReview[form.name.name] = form.name.value;
+        draftReview[form.rating.name] = parseInt(form.rating.value);
+        draftReview[form.review.name] = form.review.value;
+        draftReview['createdAt'] = new Date();
 
-        DBHelper.saveNewReview(review)
+        DBHelper.saveNewReview(draftReview)
             .then(result => {
-                console.log(result);
                 // Display the newly saved review
                 fillNewReviewHTML(result);
                 // Close and reset the modal
@@ -317,5 +311,5 @@ export function RestaurantService() {
             });
 
     };
+    
 }
-

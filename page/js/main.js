@@ -1,5 +1,5 @@
 // import { DBHelper } from './dbhelper.js';
-import { MainController } from './controller.js';
+import { WorkerRegister } from './workerRegister.js';
 import { shared } from './shared.js';
 
 /* globals GoogleMapsLoader, google, DBHelper */
@@ -26,6 +26,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
 window.onload = () => {
     addMarkersToMap();
     shared.initStarFav(document.getElementById('restaurants-list'));
+
+    new WorkerRegister();
 
 };
 
@@ -223,13 +225,6 @@ const addMarkersToMap = (restaurants = self.restaurants) => {
     });
 };
 
-/*
-window.onload = (ev) => {
-    console.log('window loaded');
-    registerServiceWorker();
-};
-*/
 
 
 
-new MainController();
