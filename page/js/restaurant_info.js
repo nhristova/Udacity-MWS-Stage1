@@ -130,7 +130,7 @@ export function RestaurantService() {
         title.innerHTML = 'Reviews';
         container.appendChild(title);
 
-        if (!reviews) {
+        if (!reviews || reviews.length === 0) {
             const noReviews = document.createElement('p');
             noReviews.innerHTML = 'No reviews yet!';
             container.appendChild(noReviews);

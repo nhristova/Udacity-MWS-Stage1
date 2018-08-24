@@ -83,29 +83,28 @@ class DBHelper {
         });
     }
 
-    /** Fetch a review by its ID.*/
+    /** Fetch a review by its ID - load from idb quickly; if offline, add pending entries;
+     * if no idb data, load from network. Finally, filter the reviews per restaurant because
+     * the idb stores return all entries (fetching returns only for provided restaurant id).
+    */
     static getReviewsById(restaurantId) {
-        // 1. Load from idb quickly
-        // 2. Load from outbox
-        // 3. Load from network and insert new entries in html (how?)
         return DBHelper.loadIdbStore('reviews')
             .then(reviewsIdb => {
-                if (reviewsIdb.length > 0) {
-                    // Call network fetch to add new entries to the reviewsIdb
+                if (reviewsIdb.length > 0 && navigator.onLine) {
+                    // Call network fetch to add new entries to the reviews idb store
                     DBHelper.fetchFromNetwork('reviews', `/?restaurant_id=${restaurantId}`);
+                    return reviewsIdb;
+                }
                     // Add pending outbox entries
-                    // TODO: Check if this works
-                    // TODO: Consider when no idb, only outbox entries
-                    if(!navigator.online) {
+                if (!navigator.onLine) {
                         return DBHelper.loadIdbStore('outbox')
                             .then(pending => reviewsIdb.concat(pending));
                     }
-                    return Promise.resolve(reviewsIdb);
-                }
-                // No reviews in idb, getch from network
+                //return Promise.resolve(reviewsIdb);
+                // No reviews in idb or outbox, get from network
                 return DBHelper.fetchFromNetwork('reviews', `/?restaurant_id=${restaurantId}`);
             })
-            //.then(reviews => reviews.filter(review => review.restaurant_id === restaurantId))
+            .then(reviews => reviews.filter(review => review.restaurant_id === restaurantId))
             .catch(error => console.log('Error getting reviews', error));
     }
 
