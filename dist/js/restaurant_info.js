@@ -14,13 +14,13 @@ import{WorkerRegister}from'./workerRegister.js';import{shared}from'./shared.js';
                     <option>5</option>
                 </select>
             </div>
-            <div id="star-rating">
+            <!--<div id="star-rating">
                 <span id="star1" class="star star-checked">★</span>
                 <span id="star2" class="star star-checked">★</span>
                 <span id="star3" class="star star-checked">★</span>
                 <span id="star4" class="star star-empty">★</span>
                 <span id="star5" class="star star-empty">★</span>
-            </div>
+            </div>-->
             <div>
                 <label for="review">Your comments:</label>
                 <textarea id="review" name="comments" cols="30" rows="10"></textarea>
