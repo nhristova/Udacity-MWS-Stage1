@@ -78,7 +78,7 @@ export function RestaurantService() {
 
         const starRef = document.getElementById('star-fav');
         starRef.id += '-' + restaurant.id;
-        if(restaurant.is_favorite) {
+        if (restaurant.is_favorite === true || restaurant.is_favorite === 'true') {
             starRef.setAttribute('checked', true);
             starRef.classList.add('star-checked');
         }

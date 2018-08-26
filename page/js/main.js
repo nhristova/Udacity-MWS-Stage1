@@ -171,7 +171,7 @@ const createRestaurantHTML = (restaurant) => {
     star.setAttribute('title', 'Mark restaurant as favourite');
     star.setAttribute('tabindex', 0);
     star.innerHTML = '★';
-    const isFav = restaurant.is_favorite;
+    const isFav = restaurant.is_favorite === true || restaurant.is_favorite === 'true';
     if(isFav){
         star.setAttribute('checked', isFav);
         star.classList.add('star-checked');
