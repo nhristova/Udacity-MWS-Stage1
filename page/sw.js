@@ -10,7 +10,6 @@ const imgsCacheName = 'restaurant-imgs';
 const allCaches = [staticCacheName, imgsCacheName];
 
 self.addEventListener('install', (event) => {
-    // TODO: uncomment for prod
     const urlsToCache = [
         '/',
         'js/main.js',
@@ -34,6 +33,10 @@ self.addEventListener('install', (event) => {
 
 self.addEventListener('fetch', (event) => {
     const requestUrl = new URL(event.request.url);
+    const htmlToCache = [
+        '/restaurant',
+        '/review-modal'
+    ];
     let storageUrl = '';
 
     if (requestUrl.origin === location.origin) {
@@ -47,9 +50,8 @@ self.addEventListener('fetch', (event) => {
             return;
         }
 
-        // TODO: Uncomment for prod
-        // Use .contains('.html') to cache any page
-        if (requestUrl.pathname.startsWith('/restaurant')) {
+        // Cache listed html pages when they are first accessed
+        if (htmlToCache.some(htmlPage => requestUrl.pathname.startsWith(htmlPage))) {
             storageUrl = requestUrl.pathname.substr(1);
 
             event.respondWith(serveFromCache(event.request, staticCacheName, storageUrl));

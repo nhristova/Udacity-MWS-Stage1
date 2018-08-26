@@ -9,6 +9,7 @@ export function RestaurantService() {
     const self = this;
     this.restaurant;
     this.map;
+    this.modal;
 
     window.onload = () => {
 
@@ -19,11 +20,13 @@ export function RestaurantService() {
             } else {
                 fillBreadcrumb();
                 fillRestaurantHTML();
-                // TODO fill restaurant reviews after loading it
-                initNewReviewModal();
-                
+                // TODO fill restaurant reviews separately from and after loading general info
+                // Delay loading of new review modal html until user clicks on 'Add review' button
+                self.modal = document.getElementById('review-modal');
+                document.getElementById('open-modal').addEventListener('click', openNewReviewModal);
+
                 shared.initStarFav(document.getElementById('star-fav-' + self.restaurant.id));
-                
+
                 GoogleMapsLoader.KEY = 'AIzaSyD7KC8kdJmtPQc1QOG9QFJP-I9Nd-i5eC0';
                 GoogleMapsLoader.LIBRARIES = ['places'];
                 GoogleMapsLoader.load(this.initMap);
@@ -191,69 +194,11 @@ export function RestaurantService() {
         return decodeURIComponent(results[2].replace(/\+/g, ' '));
     };
 
-    const createModalHTML = function(restaurant = self.restaurant) {
-        const content = document.createElement('div');
-        content.id = 'modal-content';
-        content.classList.add('modal-content');
+    const fetchModalHTML = function() {
 
-        const header = document.createElement('header');
-        header.classList.add('modal-header');
-
-        const close = document.createElement('span');
-        close.innerHTML = '&times;';
-        close.id = 'close';
-        close.classList.add('close');
-        header.appendChild(close);
-
-        const heading = document.createElement('h2');
-        heading.innerHTML = `New review for ${restaurant.name}`;
-        header.appendChild(heading);
-        content.appendChild(header);
-
-        const body = document.createElement('div');
-        body.classList.add('modal-body');
-        const form = document.createElement('form');
-        form.id = 'new-review-form';
-        form.action = 'http://localhost:1337/reviews/';
-        form.method = 'POST';
-        form.innerHTML = `<div>
-                <input type="hidden" id="restaurant_id" name="restaurant_id" value=${restaurant.id}>
-                <label for="name">Name:
-                </label>
-                <input id="name" name="name" type="text">
-            </div>
-            <div>
-                <label for="rating">Rating: </label>
-                <select id="rating" name="rating">
-                    <option>1</option>
-                    <option>2</option>
-                    <option>3</option>
-                    <option>4</option>
-                    <option>5</option>
-                </select>
-            </div>
-            <!--<div id="star-rating">
-                <span id="star1" class="star star-checked">★</span>
-                <span id="star2" class="star star-checked">★</span>
-                <span id="star3" class="star star-checked">★</span>
-                <span id="star4" class="star star-empty">★</span>
-                <span id="star5" class="star star-empty">★</span>
-            </div>-->
-            <div>
-                <label for="review">Your comments:</label>
-                <textarea id="review" name="comments" cols="30" rows="10"></textarea>
-            </div>`;
-        body.appendChild(form);
-        content.appendChild(body);
-
-        const footer = document.createElement('footer');
-        footer.classList.add('modal-footer');
-
-        footer.innerHTML = `<button id="submit-btn" class="btn btn-warning" form="new-review-form" type="submit">Save</button>
-        <button id="cancel" class="btn btn-default">Cancel</button>`;
-        content.appendChild(footer);
-
-        return content;
+        return fetch('review-modal.html')
+            .then(response => response.text())
+            .catch(error => console.log('restaurant_info fetchModalHTML Error fetching review-modal from network', error));
     };
 
     const fillNewReviewHTML = function(review) {
@@ -262,28 +207,70 @@ export function RestaurantService() {
     };
 
     /* Based on https://www.w3schools.com/howto/howto_css_modals.asp */
-    const initNewReviewModal = function() {
-        // Get the modal
-        const modal = document.getElementById('review-modal');
-        const content = createModalHTML();
-        modal.appendChild(content);
+    const openNewReviewModal = function(restaurant = self.restaurant, modal = self.modal) {
+        // Only init modal dialog once
+        if (modal.hasChildNodes()) {
+            toggleElement(modal);
+            return;
+        }
 
-        // When the user clicks anywhere outside of the modal content, on the x, or cancel button, close it
-        window.addEventListener('click', function(event) {
-            if (event.target === modal || event.target.id === 'cancel' || event.target.id === 'close') {
-                //modal.classList.add('isHidden');
+        fetchModalHTML()
+            .then(text => {
+                modal.innerHTML = text;
+
+                document.getElementById('restaurant_id').value = restaurant.id;
+                document.getElementById('modal-title').innerHTML += restaurant.name;
+
                 toggleElement(modal);
-                document.forms['new-review-form'].reset();
-            } else if (event.target.id === 'open-modal') {
-                //modal.classList.remove('isHidden');
+
+                // When the user clicks anywhere outside of the modal content, on the x, or cancel button, close it
+                const focusedElementBeforeModal = document.activeElement;
+                modal.addEventListener('click', (event) => {
+                    if (event.target === modal || event.target.id === 'cancel' || event.target.id === 'close') {
+                        toggleElement(modal);
+                        document.forms['new-review-form'].reset();
+                        focusedElementBeforeModal.focus();
+                    }
+                });
+
+                trapFocus(focusedElementBeforeModal);
+
+                document.forms['new-review-form'].onsubmit = function(event) {
+                    event.preventDefault();
+                    submitReview(event.target);
+                };
+            })
+            .catch(error => console.log('restaurant_info initNewReviewModal Error', error));
+    };
+
+    const trapFocus = function(focusedElementBeforeModal, modal = self.modal) {
+        // Save current focus from part 2 of the MWS nanodegree
+        var focusableElementsString = 'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, [tabindex="0"], [contenteditable]';
+        var focusableElements = modal.querySelectorAll(focusableElementsString);
+        // Convert NodeList to Array
+        focusableElements = Array.prototype.slice.call(focusableElements);
+
+        var firstTabStop = focusableElements[0];
+        var lastTabStop = focusableElements[focusableElements.length - 1];
+
+        modal.addEventListener('keydown', (event) => {
+            // Check for SHIFT + TAB key press
+            if (event.shiftKey && event.keyCode === 9 && document.activeElement === firstTabStop) {
+                event.preventDefault();
+                lastTabStop.focus();
+            }
+            // TAB key pressed
+            if (event.keyCode === 9 && !event.shiftKey && document.activeElement === lastTabStop) {
+                event.preventDefault();
+                firstTabStop.focus();
+            }
+
+            // Make Escape key close
+            if (event.keyCode === 27) {
                 toggleElement(modal);
+                focusedElementBeforeModal.focus();
             }
         });
-
-        document.forms['new-review-form'].onsubmit = function(event) {
-            event.preventDefault();
-            submitReview(event.target);
-        };
     };
 
     const toggleElement = function(el) {
@@ -307,10 +294,10 @@ export function RestaurantService() {
                 // Display the newly saved review
                 fillNewReviewHTML(result);
                 // Close and reset the modal
-                toggleElement(document.getElementById('review-modal'));
+                toggleElement(self.modal);
                 document.forms['new-review-form'].reset();
             });
 
     };
-    
+
 }
