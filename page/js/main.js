@@ -9,26 +9,34 @@ let restaurants,
     cuisines;
 let map;
 let markers = [];
+const mapParams = {
+    center: {
+        lat: 40.722216,
+        lng: -73.987501
+    },
+    zoom: 11,
+    key: 'AIzaSyD7KC8kdJmtPQc1QOG9QFJP-I9Nd-i5eC0'
+};
 
 
 /**
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
  */
-document.addEventListener('DOMContentLoaded', (event) => {
+
+window.onload = () => {
     fetchNeighborhoods();
     fetchCuisines();
     updateRestaurants();
-    GoogleMapsLoader.KEY = 'AIzaSyD7KC8kdJmtPQc1QOG9QFJP-I9Nd-i5eC0';
-    GoogleMapsLoader.LIBRARIES = ['places'];
-    GoogleMapsLoader.load(initMap);
-});
 
-window.onload = () => {
-    addMarkersToMap();
     shared.initStarFav(document.getElementById('restaurants-list'));
 
-    new WorkerRegister();
+    document.getElementById('map').addEventListener('click', () => {
+        GoogleMapsLoader.KEY = mapParams.key;
+        GoogleMapsLoader.LIBRARIES = ['places'];
+        GoogleMapsLoader.load(initMap);
+    });
 
+    new WorkerRegister();
 };
 
 /**
@@ -93,16 +101,28 @@ const fillCuisinesHTML = (cuisines = self.cuisines) => {
  * Initialize Google map.
  */
 const initMap = () => {
-    let loc = {
-        lat: 40.722216,
-        lng: -73.987501
-    };
     self.map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 12,
-        center: loc,
+        zoom: mapParams.zoom,
+        center: mapParams.center,
         scrollwheel: false
     });
-    //updateRestaurants();
+    addMarkersToMap();
+};
+
+const initStaticMap = (restaurants = self.restaurants) => {
+    const mapContainer = document.getElementById('map');
+    const clientWidth = window.outerWidth;
+    const clientHeight = window.outerWidth;
+    const windowDpr = window.devicePixelRatio;
+    const mapMarkers = restaurants.map(restaurant => `&markers=${restaurant.latlng.lat},${restaurant.latlng.lng}`).join('');
+
+    const mapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${mapParams.center.lat},${mapParams.center.lng}&zoom=${mapParams.zoom}&size=${clientWidth}x${clientHeight}&scale=${windowDpr}&maptype=roadmap${mapMarkers}&key=${mapParams.key}`;
+
+    const imgEl = document.createElement('img');
+    imgEl.src = mapUrl;
+    imgEl.alt = 'Static Google map of restaurant locations. Click to load';
+    mapContainer.innerHTML = '';
+    mapContainer.appendChild(imgEl);
 };
 
 /**
@@ -123,8 +143,9 @@ const updateRestaurants = () => {
             console.log(error);
         } else {
             resetRestaurants(restaurants);
+            
+            initStaticMap(restaurants);
             fillRestaurantsHTML();
-            // addMarkersToMap();
         }
     });
 };
@@ -154,7 +175,6 @@ const fillRestaurantsHTML = (restaurants = self.restaurants) => {
     restaurants.forEach(restaurant => {
         ul.append(createRestaurantHTML(restaurant));
     });
-    //addMarkersToMap();
 };
 
 /**
