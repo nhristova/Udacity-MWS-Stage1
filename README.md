@@ -21,7 +21,7 @@ Links and instructions on starting the finished page:
     - Start the server: In the 'server' folder run:
         - `npm i` installs dependencies
         - `node server` starts server (needs to have Sails globally installed)
-    - Start the page: In the 'page' or 'dist' folder run `http-server` (needs to be globally installed). Do not use the gulp dist, task is not fully implemented at the moment, the generated minified JavaScript throws errors.
+    - Start the page: In the 'page' or 'dist' folder run `http-server` (needs to be globally installed). Do not use the gulp dist task, it is not fully implemented at the moment, the generated minified JavaScript uses require and Chrome throws syntax errors.
 
 
 ## General style requirements
