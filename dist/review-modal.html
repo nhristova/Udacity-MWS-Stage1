@@ -1,0 +1,40 @@
+<div id="modal-content" class="modal-content">
+    <header class="modal-header">
+        <span id="close" class="close">&times;</span>
+        <h2 id="modal-title">New review for </h2>
+    </header>
+    <div class="modal-body">
+        <form id="new-review-form" action="http://localhost:1337/reviews/" method="POST">
+            <div>
+                <label for="name">Name:</label>
+                <input id="name" name="name" type="text">
+                <input type="hidden" id="restaurant_id" name="restaurant_id" value="">
+            </div>
+            <div>
+                <label for="rating">Rating: </label>
+                <select id="rating" name="rating">
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+        </select>
+            </div>
+            <!--<div id="star-rating">
+        <span id="star1" class="star star-checked">★</span>
+        <span id="star2" class="star star-checked">★</span>
+        <span id="star3" class="star star-checked">★</span>
+        <span id="star4" class="star star-empty">★</span>
+        <span id="star5" class="star star-empty">★</span>
+    </div>-->
+            <div>
+                <label for="review">Your comments:</label>
+                <textarea id="review" name="comments" cols="30" rows="10"></textarea>
+            </div>
+        </form>
+    </div>
+    <footer class="modal-footer">
+        <button id="submit-btn" class="btn btn-warning" form="new-review-form" type="submit">Save</button>
+        <button id="cancel" class="btn btn-default">Cancel</button>
+    </footer>
+</div>
